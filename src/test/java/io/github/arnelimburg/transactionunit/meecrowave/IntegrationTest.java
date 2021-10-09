@@ -24,7 +24,6 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
-import javax.persistence.PersistenceUnit;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;

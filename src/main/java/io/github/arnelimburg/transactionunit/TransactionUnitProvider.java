@@ -74,7 +74,6 @@ public class TransactionUnitProvider implements PersistenceProvider {
         if (delegate == null) {
             Optional<String> providerName
                 = ofNullable(map).map(m -> (String)m.get(PERSISTENCE_PROVIDER_PROPERTY));
-                //.orElseThrow(() -> new IllegalStateException("Please specify '" + PERSISTENCE_PROVIDER_PROPERTY + "'"));
             if (providerName.isPresent()) {
                 try {
                     delegate = (PersistenceProvider)Class.forName(providerName.get()).newInstance();

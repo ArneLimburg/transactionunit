@@ -20,6 +20,7 @@ import static java.util.Collections.singletonMap;
 import static javax.persistence.SharedCacheMode.UNSPECIFIED;
 import static javax.persistence.ValidationMode.AUTO;
 import static javax.persistence.spi.PersistenceUnitTransactionType.RESOURCE_LOCAL;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,7 +55,7 @@ public class TransactionUnitProviderTest {
     @Test
     @DisplayName("No persistence provider")
     public void noPersistenceProvider() {
-        assertThrows(IllegalStateException.class, () -> new TransactionUnitProvider().createEntityManagerFactory("test-unit", null));
+        assertThat(new TransactionUnitProvider().createEntityManagerFactory("test-unit", null)).isNull();
     }
 
     @Test
