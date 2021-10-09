@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -34,6 +35,7 @@ import io.github.arnelimburg.transactionunit.dto.UserDto;
 
 @ApplicationScoped
 @Path("/test-user")
+@Transactional
 public class TestResource {
 
     @Inject

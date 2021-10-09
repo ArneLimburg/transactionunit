@@ -23,12 +23,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
-import javax.transaction.Transactional;
 
 import io.github.arnelimburg.transactionunit.TestUser;
 
 @ApplicationScoped
-@Transactional
 public class TestRepository {
 
     @PersistenceContext(unitName = "test-unit", properties = {
@@ -36,7 +34,6 @@ public class TestRepository {
         @PersistenceProperty(name = PERSISTENCE_PROVIDER_PROPERTY, value = "org.hibernate.jpa.HibernatePersistenceProvider")} )
     EntityManager entityManager;
 
-    @Transactional
     public TestUser persistUser(TestUser user) {
         entityManager.persist(user);
         return user;
