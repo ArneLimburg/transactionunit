@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit;
+package io.github.arnelimburg.transactionunit.spring;
 
-import org.junit.jupiter.api.Test;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import io.github.arnelimburg.transactionunit.TestUser;
 
 /**
  * @author Olaf Prins - open knowledge GmbH
  */
-public class SimpleTest {
-
-    @Test
-    void test() {
-
-    }
+public interface TestUserJpaRepository extends JpaRepository<TestUser, Long> {
 }

@@ -15,11 +15,10 @@
  */
 package io.github.arnelimburg.transactionunit.spring;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import javax.transaction.Transactional;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,19 +30,22 @@ import io.github.arnelimburg.transactionunit.TestUser;
  * @author Olaf Prins - open knowledge GmbH
  */
 @RestController
+@Transactional
 public class UserRestController {
 
-    private List<TestUser> users = new ArrayList<>();
+    private final TestUserJpaRepository testUserJpaRepository;
+
+    public UserRestController(TestUserJpaRepository testUserJpaRepository) {
+        this.testUserJpaRepository = testUserJpaRepository;
+    }
 
     @GetMapping("/users")
     public List<TestUser> users() {
-        return users;
+        return testUserJpaRepository.findAll();
     }
 
     @PostMapping("/users")
-    public ResponseEntity<TestUser> createCustomer(@RequestBody TestUser user) {
-        users.add(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    public void createCustomer(@RequestBody TestUser user) {
+        testUserJpaRepository.save(user);
     }
-
 }

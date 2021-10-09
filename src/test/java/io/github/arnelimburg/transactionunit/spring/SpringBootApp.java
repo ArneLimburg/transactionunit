@@ -17,10 +17,12 @@ package io.github.arnelimburg.transactionunit.spring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 /**
  * @author Olaf Prins - open knowledge GmbH
  */
+@EntityScan("io.github.arnelimburg.transactionunit")
 @SpringBootApplication
 public class SpringBootApp {
 
