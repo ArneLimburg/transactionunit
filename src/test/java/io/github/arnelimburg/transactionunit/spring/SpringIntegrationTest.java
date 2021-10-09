@@ -31,9 +31,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import io.github.arnelimburg.transactionunit.RollbackAfterTest;
+
 /**
  * @author Olaf Prins - open knowledge GmbH
  */
+@RollbackAfterTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
