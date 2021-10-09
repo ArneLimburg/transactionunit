@@ -30,7 +30,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Olaf Prins - open knowledge GmbH
@@ -43,17 +42,12 @@ public class SpringIntegrationTest {
     @Autowired
     protected MockMvc mockMvc;
 
-    @DisplayName("create and read user")
-    @Transactional
+    @DisplayName("create and read user (first)")
     @Test
-    void createAndReadUser() throws Exception {
+    void createAndReadUserFirst() throws Exception {
         // Create user
 
-        String jsonBody =
-            "{\n"
-            + "    \"id\": 1,\n"
-            + "    \"name\": \"Joe Doe\"\n"
-            + "}";
+        String jsonBody = "{ \"name\": \"Joe Doe\" }";
 
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -66,5 +60,25 @@ public class SpringIntegrationTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
             .andExpect(jsonPath("$.[0].name", is("Joe Doe")));
+    }
+
+    @DisplayName("create and read user (second)")
+    @Test
+    void createAndReadUserSecond() throws Exception {
+        // Create user
+
+        String jsonBody = "{ \"name\": \"Jane Doe\" }";
+
+        mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody))
+            .andExpect(status().isOk());
+
+        // List users
+
+        mockMvc.perform(get("/users"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$.[0].name", is("Jane Doe")));
     }
 }
