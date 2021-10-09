@@ -29,7 +29,9 @@ public class TransactionUnitTransaction implements EntityTransaction {
 
     @Override
     public void begin() {
-        delegate.begin();
+        if (!delegate.isActive()) {
+            delegate.begin();
+        }
     }
 
     @Override
