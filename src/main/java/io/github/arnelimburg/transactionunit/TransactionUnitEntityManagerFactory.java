@@ -32,9 +32,11 @@ public class TransactionUnitEntityManagerFactory implements EntityManagerFactory
     private static EntityManagerFactory delegate;
 
     public TransactionUnitEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        if (delegate == null) {
-            delegate = entityManagerFactory;
+        if (delegate != null) {
+            throw new IllegalStateException(
+                "Two open EntityManagerFactories are not supported by TransactionUnit. Please close the first one");
         }
+        delegate = entityManagerFactory;
     }
 
     public void close() {
