@@ -17,7 +17,7 @@ package io.github.arnelimburg.transactionunit;
 
 import static io.github.arnelimburg.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_PROPERTY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +28,7 @@ import javax.persistence.Persistence;
 
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class SimpleJpaTest {
@@ -47,7 +48,27 @@ public class SimpleJpaTest {
         EntityManager entityManager;
 
         entityManager = entityManagerFactory.createEntityManager();
-        assumeTrue(entityManager.createNamedQuery(TestUser.FIND_ALL).getResultList().isEmpty());
+        assertTrue(entityManager.createNamedQuery(TestUser.FIND_ALL).getResultList().isEmpty());
+        entityManager.close();
+
+        entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.persist(new TestUser("John Doe"));
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        entityManager = entityManagerFactory.createEntityManager();
+        assertEquals(1, entityManager.createNamedQuery(TestUser.FIND_ALL).getResultList().size());
+        entityManager.close();
+    }
+
+    @Test
+    @Disabled
+    public void secondTest() {
+        EntityManager entityManager;
+
+        entityManager = entityManagerFactory.createEntityManager();
+        assertTrue(entityManager.createNamedQuery(TestUser.FIND_ALL).getResultList().isEmpty());
         entityManager.close();
 
         entityManager = entityManagerFactory.createEntityManager();

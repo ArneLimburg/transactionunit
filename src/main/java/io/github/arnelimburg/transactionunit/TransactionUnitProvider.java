@@ -38,7 +38,12 @@ public class TransactionUnitProvider implements PersistenceProvider {
 
     @Override
     public EntityManagerFactory createContainerEntityManagerFactory(PersistenceUnitInfo info, Map map) {
-        return getDelegate(map).createContainerEntityManagerFactory(info, filterProperties(map));
+        Map mergedProperties = new HashMap<>(info.getProperties());
+        ofNullable(map).ifPresent(properties -> mergedProperties.putAll(properties));
+        if (!mergedProperties.containsKey(PERSISTENCE_PROVIDER_PROPERTY)) {
+            mergedProperties.put(PERSISTENCE_PROVIDER_PROPERTY, info.getPersistenceProviderClassName());
+        }
+        return getDelegate(mergedProperties).createContainerEntityManagerFactory(info, filterProperties(mergedProperties));
     }
 
     @Override
