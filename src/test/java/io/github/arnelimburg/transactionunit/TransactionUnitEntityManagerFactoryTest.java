@@ -78,5 +78,7 @@ public class TransactionUnitEntityManagerFactoryTest {
 
         entityManagerFactory.unwrap(Class.class);
         verify(delegate).unwrap(Class.class);
+
+        entityManagerFactory.close();
     }
 }
