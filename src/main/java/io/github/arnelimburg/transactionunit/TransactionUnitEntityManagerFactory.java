@@ -18,6 +18,11 @@ package io.github.arnelimburg.transactionunit;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.annotation.Priority;
+import javax.decorator.Decorator;
+import javax.decorator.Delegate;
+import javax.inject.Inject;
+import javax.interceptor.Interceptor;
 import javax.persistence.Cache;
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
@@ -28,11 +33,14 @@ import javax.persistence.SynchronizationType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
 
+@Decorator
+@Priority(Interceptor.Priority.LIBRARY_BEFORE)
 public class TransactionUnitEntityManagerFactory implements EntityManagerFactory {
 
     private static EntityManagerFactory delegate;
 
-    public TransactionUnitEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+    @Inject
+    public TransactionUnitEntityManagerFactory(@Delegate EntityManagerFactory entityManagerFactory) {
         if (delegate != null && delegate.isOpen()) {
             Logger.getLogger(TransactionUnitEntityManagerFactory.class.getName()).warning("Stale EntityManagerFactory found, closing...");
             delegate.close();

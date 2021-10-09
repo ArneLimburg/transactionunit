@@ -15,14 +15,11 @@
  */
 package io.github.arnelimburg.transactionunit.meecrowave;
 
-import static io.github.arnelimburg.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_PROPERTY;
-
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceProperty;
 
 import io.github.arnelimburg.transactionunit.TestUser;
 

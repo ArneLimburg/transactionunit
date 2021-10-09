@@ -33,7 +33,10 @@ public class TransactionUnitProvider implements PersistenceProvider {
 
     @Override
     public EntityManagerFactory createEntityManagerFactory(String emName, Map map) {
-        return new TransactionUnitEntityManagerFactory(getDelegate(map).createEntityManagerFactory(emName, filterProperties(map)));
+        return getDelegate(map)
+                .map(d -> d.createEntityManagerFactory(emName, filterProperties(map)))
+                .map(TransactionUnitEntityManagerFactory::new)
+                .orElse(null);
     }
 
     @Override
@@ -43,18 +46,20 @@ public class TransactionUnitProvider implements PersistenceProvider {
         if (!mergedProperties.containsKey(PERSISTENCE_PROVIDER_PROPERTY)) {
             mergedProperties.put(PERSISTENCE_PROVIDER_PROPERTY, info.getPersistenceProviderClassName());
         }
-        return new TransactionUnitEntityManagerFactory(
-                getDelegate(mergedProperties).createContainerEntityManagerFactory(info, filterProperties(mergedProperties)));
+        return getDelegate(mergedProperties)
+                .map(d -> d.createContainerEntityManagerFactory(info, filterProperties(mergedProperties)))
+                .map(TransactionUnitEntityManagerFactory::new)
+                .orElse(null);
     }
 
     @Override
     public void generateSchema(PersistenceUnitInfo info, Map map) {
-        getDelegate(map).generateSchema(info, filterProperties(map));
+        getDelegate(map).ifPresent(d -> d.generateSchema(info, filterProperties(map)));
     }
 
     @Override
     public boolean generateSchema(String persistenceUnitName, Map map) {
-        return getDelegate(map).generateSchema(persistenceUnitName, filterProperties(map));
+        return getDelegate(map).map(d -> d.generateSchema(persistenceUnitName, filterProperties(map))).orElse(false);
     }
 
     @Override
@@ -65,18 +70,20 @@ public class TransactionUnitProvider implements PersistenceProvider {
         return delegate.getProviderUtil();
     }
 
-    private PersistenceProvider getDelegate(Map map) {
+    private Optional<PersistenceProvider> getDelegate(Map map) {
         if (delegate == null) {
-            String providerName
-                = ofNullable(map).map(m -> (String)m.get(PERSISTENCE_PROVIDER_PROPERTY))
-                .orElseThrow(() -> new IllegalStateException("Please specify '" + PERSISTENCE_PROVIDER_PROPERTY + "'"));
-            try {
-                delegate = (PersistenceProvider)Class.forName(providerName).newInstance();
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                throw new IllegalStateException(e);
+            Optional<String> providerName
+                = ofNullable(map).map(m -> (String)m.get(PERSISTENCE_PROVIDER_PROPERTY));
+                //.orElseThrow(() -> new IllegalStateException("Please specify '" + PERSISTENCE_PROVIDER_PROPERTY + "'"));
+            if (providerName.isPresent()) {
+                try {
+                    delegate = (PersistenceProvider)Class.forName(providerName.get()).newInstance();
+                } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                    throw new IllegalStateException(e);
+                }
             }
         }
-        return delegate;
+        return Optional.ofNullable(delegate);
     }
 
     private Map<?, ?> filterProperties(Map<?, ?> properties) {
