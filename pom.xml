@@ -308,6 +308,13 @@
             </goals>
           </execution>
           <execution>
+            <id>report</id>
+            <phase>package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
             <id>default-check</id>
             <phase>package</phase>
             <goals>
