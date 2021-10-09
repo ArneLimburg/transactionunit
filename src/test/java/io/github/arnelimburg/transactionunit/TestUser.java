@@ -15,14 +15,18 @@
  */
 package io.github.arnelimburg.transactionunit;
 
+import static io.github.arnelimburg.transactionunit.TestUser.FIND_ALL;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
 @Entity
-@NamedQuery(name = "TestUser.findAll", query = "SELECT u FROM TestUser u")
+@NamedQuery(name = FIND_ALL, query = "SELECT u FROM TestUser u")
 public class TestUser {
+
+    public static final String FIND_ALL = "TestUser.findAll";
 
     @Id
     @GeneratedValue

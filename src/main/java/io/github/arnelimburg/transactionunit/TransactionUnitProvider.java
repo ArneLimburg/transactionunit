@@ -15,7 +15,11 @@
  */
 package io.github.arnelimburg.transactionunit;
 
+import static java.util.Optional.ofNullable;
+
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
@@ -24,26 +28,27 @@ import javax.persistence.spi.ProviderUtil;
 
 public class TransactionUnitProvider implements PersistenceProvider {
 
+    public static final String PERSISTENCE_PROVIDER_PROPERTY = "io.github.arnelimburg.transactionunit.persistence.provider";
     private PersistenceProvider delegate;
 
     @Override
     public EntityManagerFactory createEntityManagerFactory(String emName, Map map) {
-        return getDelegate(map).createEntityManagerFactory(emName, map);
+        return getDelegate(map).createEntityManagerFactory(emName, filterProperties(map));
     }
 
     @Override
     public EntityManagerFactory createContainerEntityManagerFactory(PersistenceUnitInfo info, Map map) {
-        return getDelegate(map).createContainerEntityManagerFactory(info, map);
+        return getDelegate(map).createContainerEntityManagerFactory(info, filterProperties(map));
     }
 
     @Override
     public void generateSchema(PersistenceUnitInfo info, Map map) {
-        getDelegate(map).generateSchema(info, map);
+        getDelegate(map).generateSchema(info, filterProperties(map));
     }
 
     @Override
     public boolean generateSchema(String persistenceUnitName, Map map) {
-        return getDelegate(map).generateSchema(persistenceUnitName, map);
+        return getDelegate(map).generateSchema(persistenceUnitName, filterProperties(map));
     }
 
     @Override
@@ -56,10 +61,9 @@ public class TransactionUnitProvider implements PersistenceProvider {
 
     private PersistenceProvider getDelegate(Map map) {
         if (delegate == null) {
-            String providerName = (String)map.get("io.github.arnelimburg.transactionunit.persistence.provider");
-            if (providerName == null) {
-                throw new IllegalStateException("Please specify 'io.github.arnelimburg.transactionunit.persistence.provider'");
-            }
+            String providerName
+                = ofNullable(map).map(m -> (String)m.get(PERSISTENCE_PROVIDER_PROPERTY))
+                .orElseThrow(() -> new IllegalStateException("Please specify '" + PERSISTENCE_PROVIDER_PROPERTY + "'"));
             try {
                 delegate = (PersistenceProvider)Class.forName(providerName).newInstance();
             } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
@@ -67,5 +71,16 @@ public class TransactionUnitProvider implements PersistenceProvider {
             }
         }
         return delegate;
+    }
+
+    private Map<?, ?> filterProperties(Map<?, ?> properties) {
+        Optional<String> persistenceProviderClassName = ofNullable(properties).map(p -> (String)p.get(PERSISTENCE_PROVIDER_PROPERTY));
+        if (persistenceProviderClassName.isPresent()) {
+            Map filteredProperties = new HashMap<>(properties);
+            filteredProperties.put("javax.persistence.provider", persistenceProviderClassName.get());
+            return filteredProperties;
+        } else {
+            return properties;
+        }
     }
 }
