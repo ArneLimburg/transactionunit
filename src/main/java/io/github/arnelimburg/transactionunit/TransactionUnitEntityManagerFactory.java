@@ -16,6 +16,7 @@
 package io.github.arnelimburg.transactionunit;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.persistence.Cache;
 import javax.persistence.EntityGraph;
@@ -32,9 +33,9 @@ public class TransactionUnitEntityManagerFactory implements EntityManagerFactory
     private static EntityManagerFactory delegate;
 
     public TransactionUnitEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        if (delegate != null) {
-            throw new IllegalStateException(
-                "Two open EntityManagerFactories are not supported by TransactionUnit. Please close the first one");
+        if (delegate != null && delegate.isOpen()) {
+            Logger.getLogger(TransactionUnitEntityManagerFactory.class.getName()).warning("Stale EntityManagerFactory found, closing...");
+            delegate.close();
         }
         delegate = entityManagerFactory;
     }
