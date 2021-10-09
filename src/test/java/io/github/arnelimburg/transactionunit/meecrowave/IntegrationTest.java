@@ -35,7 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import io.github.arnelimburg.transactionunit.RollbackAfterTest;
-import io.github.arnelimburg.transactionunit.dto.UserDto;
 
 @MeecrowaveConfig
 @TestInstance(PER_CLASS)

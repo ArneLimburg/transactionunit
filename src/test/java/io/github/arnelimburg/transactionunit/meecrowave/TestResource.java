@@ -31,7 +31,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import io.github.arnelimburg.transactionunit.TestUser;
-import io.github.arnelimburg.transactionunit.dto.UserDto;
 
 @ApplicationScoped
 @Path("/test-user")
