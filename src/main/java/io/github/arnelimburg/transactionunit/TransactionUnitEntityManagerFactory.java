@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.annotation.Priority;
 import javax.decorator.Decorator;
 import javax.decorator.Delegate;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.interceptor.Interceptor;
 import javax.persistence.Cache;
@@ -33,6 +34,7 @@ import javax.persistence.SynchronizationType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
 
+@Dependent
 @Decorator
 @Priority(Interceptor.Priority.LIBRARY_BEFORE)
 public class TransactionUnitEntityManagerFactory implements EntityManagerFactory {

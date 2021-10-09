@@ -15,14 +15,11 @@
  */
 package io.github.arnelimburg.transactionunit.meecrowave;
 
-import static io.github.arnelimburg.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_PROPERTY;
-
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceProperty;
 
 import io.github.arnelimburg.transactionunit.TestUser;
 
@@ -30,9 +27,7 @@ import io.github.arnelimburg.transactionunit.TestUser;
 @ApplicationScoped
 public class TestRepository {
 
-    @PersistenceContext(unitName = "test-unit", properties = {
-        @PersistenceProperty(name = "javax.persistence.provider", value = "io.github.arnelimburg.transactionunit.TransactionUnitProvider"),
-        @PersistenceProperty(name = PERSISTENCE_PROVIDER_PROPERTY, value = "org.hibernate.jpa.HibernatePersistenceProvider")} )
+    @PersistenceContext(unitName = "test-unit")
     EntityManager entityManager;
 
     public TestUser persistUser(TestUser user) {

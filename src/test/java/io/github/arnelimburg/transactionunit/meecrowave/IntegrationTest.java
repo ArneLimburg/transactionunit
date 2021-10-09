@@ -15,11 +15,16 @@
  */
 package io.github.arnelimburg.transactionunit.meecrowave;
 
+import static io.github.arnelimburg.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_PROPERTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 import java.util.List;
 
+import javax.enterprise.context.Dependent;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceProperty;
+import javax.persistence.PersistenceUnit;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -36,10 +41,15 @@ import org.junit.jupiter.api.TestInstance;
 
 import io.github.arnelimburg.transactionunit.RollbackAfterTest;
 
+@Dependent
 @MeecrowaveConfig
 @TestInstance(PER_CLASS)
 @RollbackAfterTest
+@PersistenceContext(unitName = "test-unit", properties = {
+    @PersistenceProperty(name = "javax.persistence.provider", value = "io.github.arnelimburg.transactionunit.TransactionUnitProvider"),
+    @PersistenceProperty(name = PERSISTENCE_PROVIDER_PROPERTY, value = "org.hibernate.jpa.HibernatePersistenceProvider")} )
 public class IntegrationTest {
+
     @ConfigurationInject
     private Meecrowave.Builder config;
 
