@@ -13,3 +13,6 @@ buildNumber.properties
 .idea/
 *.iml
 *.ipr
+.project
+.classpath
+.settings/
