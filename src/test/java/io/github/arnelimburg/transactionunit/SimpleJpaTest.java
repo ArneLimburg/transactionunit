@@ -28,7 +28,6 @@ import javax.persistence.Persistence;
 
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class SimpleJpaTest {
@@ -60,10 +59,11 @@ public class SimpleJpaTest {
         entityManager = entityManagerFactory.createEntityManager();
         assertEquals(1, entityManager.createNamedQuery(TestUser.FIND_ALL).getResultList().size());
         entityManager.close();
+
+        TransactionUnitEntityManager.rollbackAll();
     }
 
     @Test
-    @Disabled
     public void secondTest() {
         EntityManager entityManager;
 
@@ -80,5 +80,7 @@ public class SimpleJpaTest {
         entityManager = entityManagerFactory.createEntityManager();
         assertEquals(1, entityManager.createNamedQuery(TestUser.FIND_ALL).getResultList().size());
         entityManager.close();
+
+        TransactionUnitEntityManager.rollbackAll();
     }
 }

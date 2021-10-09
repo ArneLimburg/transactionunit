@@ -33,7 +33,7 @@ public class TransactionUnitProvider implements PersistenceProvider {
 
     @Override
     public EntityManagerFactory createEntityManagerFactory(String emName, Map map) {
-        return getDelegate(map).createEntityManagerFactory(emName, filterProperties(map));
+        return new TransactionUnitEntityManagerFactory(getDelegate(map).createEntityManagerFactory(emName, filterProperties(map)));
     }
 
     @Override
@@ -43,7 +43,8 @@ public class TransactionUnitProvider implements PersistenceProvider {
         if (!mergedProperties.containsKey(PERSISTENCE_PROVIDER_PROPERTY)) {
             mergedProperties.put(PERSISTENCE_PROVIDER_PROPERTY, info.getPersistenceProviderClassName());
         }
-        return getDelegate(mergedProperties).createContainerEntityManagerFactory(info, filterProperties(mergedProperties));
+        return new TransactionUnitEntityManagerFactory(
+                getDelegate(mergedProperties).createContainerEntityManagerFactory(info, filterProperties(mergedProperties)));
     }
 
     @Override

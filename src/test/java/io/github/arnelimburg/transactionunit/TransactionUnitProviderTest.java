@@ -37,7 +37,9 @@ import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 
+import org.hibernate.SessionFactory;
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -67,19 +69,22 @@ public class TransactionUnitProviderTest {
     @DisplayName("Hibernate ProviderUtil is used, when Hibernate Provider is used")
     public void hibernateProviderUtilWithHibernateProvider() {
         TransactionUnitProvider provider = new TransactionUnitProvider();
-        provider.createContainerEntityManagerFactory(new TestPersistenceUnitInfo(), null);
+        EntityManagerFactory entityManagerFactory = provider.createContainerEntityManagerFactory(new TestPersistenceUnitInfo(), null);
 
         assertTrue(provider.getProviderUtil().getClass().getName().contains(".hibernate."));
+
+        entityManagerFactory.close();
     }
 
     @Test
     @DisplayName("Hibernate Provider is used, when initialized with unit info")
     public void hibernateProviderWithUnitInfo() {
         TransactionUnitProvider provider = new TransactionUnitProvider();
-        provider.createContainerEntityManagerFactory(new TestPersistenceUnitInfo(), null);
+        provider.createContainerEntityManagerFactory(new TestPersistenceUnitInfo(), null).close();
 
         EntityManagerFactory entityManagerFactory = provider.createEntityManagerFactory("test-unit", null);
-        assertTrue(entityManagerFactory.getClass().getName().contains(".hibernate."));
+        Assertions.assertNotNull(entityManagerFactory.unwrap(SessionFactory.class));
+        entityManagerFactory.close();
     }
 
     @Test
