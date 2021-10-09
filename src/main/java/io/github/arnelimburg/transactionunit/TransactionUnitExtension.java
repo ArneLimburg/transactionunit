@@ -15,13 +15,44 @@
  */
 package io.github.arnelimburg.transactionunit;
 
+import static java.util.Optional.ofNullable;
+import static org.junit.platform.commons.util.AnnotationUtils.findAnnotation;
+
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class TransactionUnitExtension implements AfterTestExecutionCallback {
+import io.github.arnelimburg.transactionunit.RollbackAfterTest.Type;
+
+public class TransactionUnitExtension implements AfterAllCallback, AfterEachCallback, AfterTestExecutionCallback {
 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
-        TransactionUnitEntityManager.rollbackAll();
+        if (getType(context) == Type.EXECUTION) {
+            TransactionUnitEntityManager.rollbackAll();
+        }
+    }
+
+    @Override
+    public void afterEach(ExtensionContext context) throws Exception {
+        if (getType(context) == Type.METHOD) {
+            TransactionUnitEntityManager.rollbackAll();
+        }
+    }
+
+    @Override
+    public void afterAll(ExtensionContext context) throws Exception {
+        if (getType(context) == Type.CLASS) {
+            TransactionUnitEntityManager.rollbackAll();
+        }
+    }
+
+    private Type getType(ExtensionContext context) {
+        return ofNullable(
+                findAnnotation(context.getTestMethod(), RollbackAfterTest.class)
+                .orElse(findAnnotation(context.getTestClass(), RollbackAfterTest.class)
+                .orElse(null))).map(RollbackAfterTest::value)
+        .orElse(Type.METHOD);
     }
 }
