@@ -47,6 +47,22 @@ public class TransactionUnitEntityManager implements EntityManager {
         }
     }
 
+    public static void rollbackAll() {
+        if (delegate != null) {
+            EntityManager entityManager = delegate;
+            delegate = null;
+            entityManager.getTransaction().rollback();
+            entityManager.close();
+        }
+    }
+
+    public void close() {
+        if (delegate != null) {
+            delegate.clear();
+        }
+        entityManagerSemaphore.release();
+    }
+
     public void persist(Object entity) {
         delegate.persist(entity);
     }
@@ -211,13 +227,6 @@ public class TransactionUnitEntityManager implements EntityManager {
         return delegate.getDelegate();
     }
 
-    public void close() {
-        if (delegate != null) {
-            delegate.clear();
-        }
-        entityManagerSemaphore.release();
-    }
-
     public boolean isOpen() {
         return delegate.isOpen();
     }
@@ -252,14 +261,5 @@ public class TransactionUnitEntityManager implements EntityManager {
 
     public <T> List<EntityGraph<? super T>> getEntityGraphs(Class<T> entityClass) {
         return delegate.getEntityGraphs(entityClass);
-    }
-
-    public static void rollbackAll() {
-        if (delegate != null) {
-            EntityManager entityManager = delegate;
-            delegate = null;
-            entityManager.getTransaction().rollback();
-            entityManager.close();
-        }
     }
 }

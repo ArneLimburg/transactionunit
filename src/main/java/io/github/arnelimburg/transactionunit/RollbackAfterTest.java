@@ -32,7 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(TransactionUnitExtension.class)
 public @interface RollbackAfterTest {
 
-    Type value() default Type.METHOD;
+    Type value() default Type.EXECUTION;
 
     enum Type {
         CLASS,
