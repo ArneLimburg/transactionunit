@@ -38,6 +38,10 @@
       <name>Olaf Prins</name>
       <email>someone47@prinsnet.de</email>
     </developer>
+    <developer>
+      <name>Markus Sundermann</name>
+      <email>markus.sundermann@outlook.com</email>
+    </developer>
   </developers>
 
   <distributionManagement>
