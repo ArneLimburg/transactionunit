@@ -34,6 +34,10 @@
       <organization>The Apache Software Foundation</organization>
       <url>https://www.apache.org/</url>
     </developer>
+    <developer>
+      <name>Olaf Prins</name>
+      <email>someone47@prinsnet.de</email>
+    </developer>
   </developers>
 
   <distributionManagement>
