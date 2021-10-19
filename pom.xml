@@ -5,7 +5,7 @@
 
   <groupId>io.github.arnelimburg</groupId>
   <artifactId>transactionunit</artifactId>
-  <version>0.9.2-SNAPSHOT</version>
+  <version>0.9.0-SNAPSHOT</version>
 
   <name>Transaction-Unit</name>
   <url>http://arnelimburg.github.io/transactionunit</url>
@@ -230,7 +230,7 @@
         <configuration>
           <serverId>ossrh</serverId>
           <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-          <stagingProfileId>org.transactionunit</stagingProfileId>
+          <stagingProfileId>4da7f85d5215ac</stagingProfileId>
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
           <stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
         </configuration>
