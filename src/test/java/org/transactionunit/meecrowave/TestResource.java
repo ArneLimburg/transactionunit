@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit.meecrowave;
+package org.transactionunit.meecrowave;
 
 import static java.util.stream.Collectors.toList;
 
@@ -30,7 +30,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import io.github.arnelimburg.transactionunit.TestUser;
+import org.transactionunit.TestUser;
 
 @ApplicationScoped
 @Path("/test-user")

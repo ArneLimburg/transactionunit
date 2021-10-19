@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit;
+package org.transactionunit;
 
 import static java.util.Optional.ofNullable;
 import static org.junit.platform.commons.util.AnnotationUtils.findAnnotation;
@@ -22,8 +22,7 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-
-import io.github.arnelimburg.transactionunit.RollbackAfterTest.Type;
+import org.transactionunit.RollbackAfterTest.Type;
 
 public class TransactionUnitExtension implements AfterAllCallback, AfterEachCallback, AfterTestExecutionCallback {
 

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit.meecrowave;
+package org.transactionunit.meecrowave;
 
-import static io.github.arnelimburg.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_PROPERTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+import static org.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_PROPERTY;
 
 import java.util.List;
 
@@ -37,8 +37,7 @@ import org.apache.meecrowave.testing.ConfigurationInject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
-import io.github.arnelimburg.transactionunit.RollbackAfterTest;
+import org.transactionunit.RollbackAfterTest;
 
 @Dependent
 @MeecrowaveConfig

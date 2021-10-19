@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit;
+package org.transactionunit;
 
 import static java.util.Optional.ofNullable;
 

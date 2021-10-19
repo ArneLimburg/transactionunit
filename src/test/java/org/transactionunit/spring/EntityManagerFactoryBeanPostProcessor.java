@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit.spring;
+package org.transactionunit.spring;
 
 import javax.persistence.EntityManagerFactory;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
-
-import io.github.arnelimburg.transactionunit.TransactionUnitEntityManagerFactory;
+import org.transactionunit.TransactionUnitEntityManagerFactory;
 
 /**
  * @author Olaf Prins - open knowledge GmbH

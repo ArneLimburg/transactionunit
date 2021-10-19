@@ -13,20 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit.spring;
+package org.transactionunit.meecrowave;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 
-/**
- * @author Olaf Prins - open knowledge GmbH
- */
-@EntityScan("io.github.arnelimburg.transactionunit")
-@SpringBootApplication
-public class SpringBootApp {
+public class UserDto {
+    @JsonbProperty("name")
+    private String name;
 
-    public static void main(String[] args) {
-        SpringApplication.run(SpringBootApp.class, args);
+    @JsonbCreator
+    public UserDto(@JsonbProperty("name") String aName) {
+        name = aName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String aName) {
+        name = aName;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDto{"
+                + "name='" + name + '\''
+                + '}';
     }
 }

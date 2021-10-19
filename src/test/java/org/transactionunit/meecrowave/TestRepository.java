@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit.meecrowave;
+package org.transactionunit.meecrowave;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import io.github.arnelimburg.transactionunit.TestUser;
+import org.transactionunit.TestUser;
 
 
 @ApplicationScoped

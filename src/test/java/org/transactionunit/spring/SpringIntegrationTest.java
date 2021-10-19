@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit.spring;
+package org.transactionunit.spring;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -30,8 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-
-import io.github.arnelimburg.transactionunit.RollbackAfterTest;
+import org.transactionunit.RollbackAfterTest;
 
 /**
  * @author Olaf Prins - open knowledge GmbH

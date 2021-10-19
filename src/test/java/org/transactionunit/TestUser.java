@@ -13,32 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit.meecrowave;
+package org.transactionunit;
 
-import javax.json.bind.annotation.JsonbCreator;
-import javax.json.bind.annotation.JsonbProperty;
+import static org.transactionunit.TestUser.FIND_ALL;
 
-public class UserDto {
-    @JsonbProperty("name")
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+
+@Entity
+@NamedQuery(name = FIND_ALL, query = "SELECT u FROM TestUser u")
+public class TestUser {
+
+    public static final String FIND_ALL = "TestUser.findAll";
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
     private String name;
 
-    @JsonbCreator
-    public UserDto(@JsonbProperty("name") String aName) {
-        name = aName;
+    protected TestUser() {
+        // for jpa
+    }
+
+    public TestUser(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String aName) {
-        name = aName;
-    }
-
-    @Override
-    public String toString() {
-        return "UserDto{"
-                + "name='" + name + '\''
-                + '}';
     }
 }

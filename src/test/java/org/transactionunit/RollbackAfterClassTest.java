@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit;
+package org.transactionunit;
 
-import static io.github.arnelimburg.transactionunit.RollbackAfterTest.Type.CLASS;
-import static io.github.arnelimburg.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_PROPERTY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.transactionunit.RollbackAfterTest.Type.CLASS;
+import static org.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_PROPERTY;
 
 import java.util.HashMap;
 import java.util.Map;

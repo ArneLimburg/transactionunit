@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit.spring;
+package org.transactionunit.spring;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import io.github.arnelimburg.transactionunit.TestUser;
+import org.transactionunit.TestUser;
 
 /**
  * @author Olaf Prins - open knowledge GmbH

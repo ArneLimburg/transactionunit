@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit;
+package org.transactionunit;
 
-import static io.github.arnelimburg.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_PROPERTY;
 import static java.util.Collections.singletonMap;
 import static javax.persistence.SharedCacheMode.UNSPECIFIED;
 import static javax.persistence.ValidationMode.AUTO;
@@ -23,6 +22,7 @@ import static javax.persistence.spi.PersistenceUnitTransactionType.RESOURCE_LOCA
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_PROPERTY;
 
 import java.net.URL;
 import java.util.HashMap;

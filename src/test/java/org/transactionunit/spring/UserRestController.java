@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.arnelimburg.transactionunit.spring;
+package org.transactionunit.spring;
 
 import java.util.List;
 
@@ -23,8 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import io.github.arnelimburg.transactionunit.TestUser;
+import org.transactionunit.TestUser;
 
 /**
  * @author Olaf Prins - open knowledge GmbH
