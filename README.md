@@ -9,3 +9,14 @@
 [![Ko-Fi](https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee!-%2346b798.svg)](https://ko-fi.com/arnelimburg)
 
 # TransactionUnit
+
+TransactionUnit is a framework that provides advanced rollback-after-test behavior. 
+
+Database tests are one of the longest running tests in today's enterprise applications.
+Database startup and setup usually take a long amount of the time.
+On the other hand one normally want to test against the database technology that is used in production.
+However using one database instance for the complete test suite has a major draw back.
+Tests are not independent any more and may affect future tests.
+
+TransactionUnit addresses this problem by hooking into JPA, behave like transactions behave,
+but rolling back all transactions after the test and returning the database into the state before the test.
