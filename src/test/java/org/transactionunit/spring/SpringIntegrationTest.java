@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Arne Limburg
+ * Copyright 2021 Olaf Prins, Arne Limburg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.transactionunit.spring;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,9 +33,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.transactionunit.RollbackAfterTest;
 
-/**
- * @author Olaf Prins - open knowledge GmbH
- */
 @RollbackAfterTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -43,6 +41,8 @@ public class SpringIntegrationTest {
 
     @Autowired
     protected MockMvc mockMvc;
+    @Autowired
+    protected UserService userService;
 
     @DisplayName("create and read user (first)")
     @Test
@@ -55,6 +55,8 @@ public class SpringIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
             .andExpect(status().isOk());
+
+        assertTrue(userService.isUserStored());
 
         // List users
 
@@ -75,6 +77,8 @@ public class SpringIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
             .andExpect(status().isOk());
+
+        assertTrue(userService.isUserStored());
 
         // List users
 
