@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Arne Limburg
+ * Copyright 2021 Olaf Prins, Arne Limburg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,24 @@ package org.transactionunit.spring;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.transactionunit.TestUser;
 
-/**
- * @author Olaf Prins - open knowledge GmbH
- */
 @RestController
 @Transactional
 public class UserRestController {
 
     private final TestUserJpaRepository testUserJpaRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public UserRestController(TestUserJpaRepository testUserJpaRepository) {
+    public UserRestController(TestUserJpaRepository testUserJpaRepository, ApplicationEventPublisher eventPublisher) {
         this.testUserJpaRepository = testUserJpaRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @GetMapping("/users")
@@ -46,5 +45,6 @@ public class UserRestController {
     @PostMapping("/users")
     public void createCustomer(@RequestBody TestUser user) {
         testUserJpaRepository.save(user);
+        eventPublisher.publishEvent(user);
     }
 }

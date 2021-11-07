@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Olaf Prins, Arne Limburg
+ * Copyright 2021 Arne Limburg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,23 @@
  */
 package org.transactionunit.spring;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import static org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT;
 
-@EntityScan("org.transactionunit")
-@SpringBootApplication(scanBasePackageClasses = SpringBootApp.class)
-public class SpringBootApp {
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionalEventListener;
+import org.transactionunit.TestUser;
 
-    public static void main(String[] args) {
-        SpringApplication.run(SpringBootApp.class, args);
+@Service
+public class UserService {
+
+    private boolean userStored;
+
+    public boolean isUserStored() {
+        return userStored;
+    }
+
+    @TransactionalEventListener(phase = AFTER_COMMIT)
+    public void userCreated(TestUser user) {
+        userStored = true;
     }
 }
