@@ -17,8 +17,6 @@ package org.transactionunit;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
-import java.util.function.Supplier;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
@@ -37,30 +35,22 @@ import javax.persistence.metamodel.Metamodel;
 
 public class TransactionUnitEntityManager implements EntityManager {
 
-    private static Semaphore entityManagerSemaphore = new Semaphore(1);
-    private static EntityManager delegate;
+    private TransactionUnitEntityManagerFactory entityManagerFactory;
+    private EntityManager delegate;
 
-    public TransactionUnitEntityManager(Supplier<EntityManager> entityManagerSupplier) {
-        entityManagerSemaphore.acquireUninterruptibly();
-        if (delegate == null) {
-            delegate = entityManagerSupplier.get();
-        }
+    public TransactionUnitEntityManager(TransactionUnitEntityManagerFactory factory, EntityManager entityManager) {
+        entityManagerFactory = factory;
+        delegate = entityManager;
     }
 
-    public static void rollbackAll() {
-        if (delegate != null) {
-            EntityManager entityManager = delegate;
-            delegate = null;
-            entityManager.getTransaction().rollback();
-            entityManager.close();
-        }
+    public void rollbackAndClose() {
+        delegate.getTransaction().rollback();
+        delegate.close();
     }
 
     public void close() {
-        if (delegate != null) {
-            delegate.clear();
-        }
-        entityManagerSemaphore.release();
+        delegate.clear();
+        entityManagerFactory.release();
     }
 
     public void persist(Object entity) {

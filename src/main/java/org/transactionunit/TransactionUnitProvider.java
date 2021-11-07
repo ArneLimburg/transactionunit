@@ -16,10 +16,13 @@
 package org.transactionunit;
 
 import static java.util.Optional.ofNullable;
+import static javax.persistence.spi.PersistenceProviderResolverHolder.getPersistenceProviderResolver;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
@@ -29,7 +32,18 @@ import javax.persistence.spi.ProviderUtil;
 public class TransactionUnitProvider implements PersistenceProvider {
 
     public static final String PERSISTENCE_PROVIDER_PROPERTY = "io.github.arnelimburg.transactionunit.persistence.provider";
+    private List<TransactionUnitEntityManagerFactory> entityManagerFactories = new CopyOnWriteArrayList<>();
     private PersistenceProvider delegate;
+
+    public static TransactionUnitProvider getInstance() {
+        return getPersistenceProviderResolver()
+            .getPersistenceProviders()
+            .stream()
+            .filter(TransactionUnitProvider.class::isInstance)
+            .map(TransactionUnitProvider.class::cast)
+            .findAny()
+            .get();
+    }
 
     @Override
     public EntityManagerFactory createEntityManagerFactory(String emName, Map map) {
@@ -68,6 +82,18 @@ public class TransactionUnitProvider implements PersistenceProvider {
             throw new IllegalStateException("No persistence provider initialized");
         }
         return delegate.getProviderUtil();
+    }
+
+    void rollbackAll() {
+        entityManagerFactories.forEach(TransactionUnitEntityManagerFactory::rollbackAll);
+    }
+
+    void registerEntityManagerFactory(TransactionUnitEntityManagerFactory entityManagerFactory) {
+        entityManagerFactories.add(entityManagerFactory);
+    }
+
+    void unregisterEntityManagerFactory(TransactionUnitEntityManagerFactory entityManagerFactory) {
+        entityManagerFactories.remove(entityManagerFactory);
     }
 
     private Optional<PersistenceProvider> getDelegate(Map map) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Arne Limburg
+ * Copyright 2021 Olaf Prins, Arne Limburg
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.transactionunit.TransactionUnitEntityManagerFactory;
 
-/**
- * @author Olaf Prins - open knowledge GmbH
- */
 public class EntityManagerFactoryBeanPostProcessor implements BeanPostProcessor {
 
     @Override

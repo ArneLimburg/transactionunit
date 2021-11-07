@@ -46,7 +46,8 @@ public class TransactionUnitEntityManagerTest {
         EntityManager delegate = mock(EntityManager.class);
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(delegate.getTransaction()).thenReturn(transaction);
-        TransactionUnitEntityManager entityManager = new TransactionUnitEntityManager(() -> delegate);
+        TransactionUnitEntityManager entityManager
+            = new TransactionUnitEntityManager(mock(TransactionUnitEntityManagerFactory.class), delegate);
 
         entityManager.persist(new Object());
         verify(delegate).persist(any(Object.class));
@@ -93,7 +94,8 @@ public class TransactionUnitEntityManagerTest {
         EntityManager delegate = mock(EntityManager.class);
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(delegate.getTransaction()).thenReturn(transaction);
-        TransactionUnitEntityManager entityManager = new TransactionUnitEntityManager(() -> delegate);
+        TransactionUnitEntityManager entityManager
+            = new TransactionUnitEntityManager(mock(TransactionUnitEntityManagerFactory.class), delegate);
 
         entityManager.find(Class.class, new Object());
         verify(delegate).find(any(Class.class), Mockito.any(Object.class));
@@ -176,7 +178,8 @@ public class TransactionUnitEntityManagerTest {
         EntityManager delegate = mock(EntityManager.class);
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(delegate.getTransaction()).thenReturn(transaction);
-        TransactionUnitEntityManager entityManager = new TransactionUnitEntityManager(() -> delegate);
+        TransactionUnitEntityManager entityManager
+            = new TransactionUnitEntityManager(mock(TransactionUnitEntityManagerFactory.class), delegate);
 
         entityManager.flush();
         verify(delegate).flush();

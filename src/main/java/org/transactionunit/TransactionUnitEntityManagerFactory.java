@@ -15,15 +15,13 @@
  */
 package org.transactionunit;
 
+import static org.transactionunit.TransactionUnitProvider.getInstance;
+
 import java.util.Map;
+import java.util.concurrent.Semaphore;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
-import javax.annotation.Priority;
-import javax.decorator.Decorator;
-import javax.decorator.Delegate;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import javax.interceptor.Interceptor;
 import javax.persistence.Cache;
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
@@ -34,42 +32,48 @@ import javax.persistence.SynchronizationType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.metamodel.Metamodel;
 
-@Dependent
-@Decorator
-@Priority(Interceptor.Priority.LIBRARY_BEFORE)
 public class TransactionUnitEntityManagerFactory implements EntityManagerFactory {
 
-    private static EntityManagerFactory delegate;
+    private static final Logger LOG = Logger.getLogger(TransactionUnitEntityManagerFactory.class.getName());
 
-    @Inject
-    public TransactionUnitEntityManagerFactory(@Delegate EntityManagerFactory entityManagerFactory) {
-        if (delegate != null && delegate.isOpen()) {
-            Logger.getLogger(TransactionUnitEntityManagerFactory.class.getName()).warning("Stale EntityManagerFactory found, closing...");
-            delegate.close();
-        }
+    private EntityManagerFactory delegate;
+    private Semaphore entityManagerSemaphore = new Semaphore(1);
+    private TransactionUnitEntityManager entityManager;
+
+    public TransactionUnitEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         delegate = entityManagerFactory;
+        getInstance().registerEntityManagerFactory(this);
     }
 
     public void close() {
+        getInstance().unregisterEntityManagerFactory(this);
         EntityManagerFactory factory = delegate;
         delegate = null;
         factory.close();
     }
 
     public EntityManager createEntityManager() {
-        return new TransactionUnitEntityManager(delegate::createEntityManager);
+        return createEntityManager(delegate::createEntityManager);
     }
 
     public EntityManager createEntityManager(Map map) {
-        return new TransactionUnitEntityManager(() -> delegate.createEntityManager(map));
+        return createEntityManager(() -> delegate.createEntityManager(map));
     }
 
     public EntityManager createEntityManager(SynchronizationType synchronizationType) {
-        return new TransactionUnitEntityManager(() -> delegate.createEntityManager(synchronizationType));
+        return createEntityManager(() -> delegate.createEntityManager(synchronizationType));
     }
 
     public EntityManager createEntityManager(SynchronizationType synchronizationType, Map map) {
-        return new TransactionUnitEntityManager(() -> delegate.createEntityManager(synchronizationType, map));
+        return createEntityManager(() -> delegate.createEntityManager(synchronizationType, map));
+    }
+
+    private EntityManager createEntityManager(Supplier<EntityManager> delegateSupplier) {
+        entityManagerSemaphore.acquireUninterruptibly();
+        if (entityManager == null) {
+            entityManager = new TransactionUnitEntityManager(this, delegateSupplier.get());
+        }
+        return entityManager;
     }
 
     public CriteriaBuilder getCriteriaBuilder() {
@@ -106,5 +110,21 @@ public class TransactionUnitEntityManagerFactory implements EntityManagerFactory
 
     public <T> void addNamedEntityGraph(String graphName, EntityGraph<T> entityGraph) {
         delegate.addNamedEntityGraph(graphName, entityGraph);
+    }
+
+    void rollbackAll() {
+        if (entityManagerSemaphore.availablePermits() == 0) {
+            LOG.info("Stale EntityManager found, releasing");
+            release();
+        }
+
+        if (entityManager != null) {
+            entityManager.rollbackAndClose();
+            entityManager = null;
+        }
+    }
+
+    void release() {
+        entityManagerSemaphore.release();
     }
 }

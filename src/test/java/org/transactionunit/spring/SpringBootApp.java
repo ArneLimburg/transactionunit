@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @EntityScan("org.transactionunit")
-@SpringBootApplication(scanBasePackageClasses = SpringBootApp.class)
+@SpringBootApplication
 public class SpringBootApp {
 
     public static void main(String[] args) {

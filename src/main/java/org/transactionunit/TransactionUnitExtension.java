@@ -17,6 +17,7 @@ package org.transactionunit;
 
 import static java.util.Optional.ofNullable;
 import static org.junit.platform.commons.util.AnnotationUtils.findAnnotation;
+import static org.transactionunit.TransactionUnitProvider.getInstance;
 
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -29,21 +30,21 @@ public class TransactionUnitExtension implements AfterAllCallback, AfterEachCall
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
         if (getType(context) == Type.EXECUTION) {
-            TransactionUnitEntityManager.rollbackAll();
+            getInstance().rollbackAll();
         }
     }
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
         if (getType(context) == Type.METHOD) {
-            TransactionUnitEntityManager.rollbackAll();
+            getInstance().rollbackAll();
         }
     }
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
         if (getType(context) == Type.CLASS) {
-            TransactionUnitEntityManager.rollbackAll();
+            getInstance().rollbackAll();
         }
     }
 

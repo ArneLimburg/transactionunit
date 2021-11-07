@@ -46,7 +46,7 @@ import org.transactionunit.RollbackAfterTest;
 @PersistenceContext(unitName = "test-unit", properties = {
     @PersistenceProperty(name = "javax.persistence.provider", value = "io.github.arnelimburg.transactionunit.TransactionUnitProvider"),
     @PersistenceProperty(name = PERSISTENCE_PROVIDER_PROPERTY, value = "org.hibernate.jpa.HibernatePersistenceProvider")} )
-public class IntegrationTest {
+public class MeecrowaveIntegrationTest {
 
     @ConfigurationInject
     private Meecrowave.Builder config;

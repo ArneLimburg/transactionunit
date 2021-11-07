@@ -21,11 +21,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Map;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
+import javax.persistence.SynchronizationType;
 
 import org.junit.jupiter.api.Test;
 
@@ -33,24 +38,30 @@ public class TransactionUnitEntityManagerFactoryTest {
 
     @Test
     public void allMethodsAreDelegated() {
+        EntityManager entityManagerMock = mock(EntityManager.class);
+        when(entityManagerMock.getTransaction()).thenReturn(mock(EntityTransaction.class));
         EntityManagerFactory delegate = mock(EntityManagerFactory.class);
+        when(delegate.createEntityManager()).thenReturn(entityManagerMock);
+        when(delegate.createEntityManager(any(Map.class))).thenReturn(entityManagerMock);
+        when(delegate.createEntityManager(any(SynchronizationType.class))).thenReturn(entityManagerMock);
+        when(delegate.createEntityManager(any(SynchronizationType.class), any(Map.class))).thenReturn(entityManagerMock);
         TransactionUnitEntityManagerFactory entityManagerFactory = new TransactionUnitEntityManagerFactory(delegate);
 
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManagerFactory.createEntityManager();
         verify(delegate).createEntityManager();
-        entityManager.close();
+        entityManagerFactory.rollbackAll();
 
-        entityManager = entityManagerFactory.createEntityManager(emptyMap());
+        entityManagerFactory.createEntityManager(emptyMap());
         verify(delegate).createEntityManager(emptyMap());
-        entityManager.close();
+        entityManagerFactory.rollbackAll();
 
-        entityManager = entityManagerFactory.createEntityManager(UNSYNCHRONIZED);
+        entityManagerFactory.createEntityManager(UNSYNCHRONIZED);
         verify(delegate).createEntityManager(UNSYNCHRONIZED);
-        entityManager.close();
+        entityManagerFactory.rollbackAll();
 
-        entityManager = entityManagerFactory.createEntityManager(UNSYNCHRONIZED, emptyMap());
+        entityManagerFactory.createEntityManager(UNSYNCHRONIZED, emptyMap());
         verify(delegate).createEntityManager(UNSYNCHRONIZED, emptyMap());
-        entityManager.close();
+        entityManagerFactory.rollbackAll();
 
         entityManagerFactory.getCriteriaBuilder();
         verify(delegate).getCriteriaBuilder();
