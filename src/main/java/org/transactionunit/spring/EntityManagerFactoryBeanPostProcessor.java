@@ -19,13 +19,11 @@ import javax.persistence.EntityManagerFactory;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.stereotype.Component;
 import org.transactionunit.TransactionUnitEntityManagerFactory;
 
 /**
  * @author Olaf Prins - open knowledge GmbH
  */
-@Component
 public class EntityManagerFactoryBeanPostProcessor implements BeanPostProcessor {
 
     @Override
