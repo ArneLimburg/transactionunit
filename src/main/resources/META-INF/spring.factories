@@ -1,0 +1,2 @@
+# ContextCustomizerFactories for the Spring TestContext Framework
+org.springframework.test.context.ContextCustomizerFactory = org.transactionunit.spring.RollbackAfterTestContextCustomizerFactory
