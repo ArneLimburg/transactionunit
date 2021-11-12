@@ -31,7 +31,7 @@ import javax.persistence.spi.ProviderUtil;
 
 public class TransactionUnitProvider implements PersistenceProvider {
 
-    public static final String PERSISTENCE_PROVIDER_PROPERTY = "io.github.arnelimburg.transactionunit.persistence.provider";
+    public static final String PERSISTENCE_PROVIDER_PROPERTY = "org.transactionunit.persistence.provider";
     private List<TransactionUnitEntityManagerFactory> entityManagerFactories = new CopyOnWriteArrayList<>();
     private PersistenceProvider delegate;
 
