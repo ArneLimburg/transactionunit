@@ -47,9 +47,9 @@ import org.junit.jupiter.api.Test;
 public class TransactionUnitProviderTest {
 
     @Test
-    @DisplayName("No ProviderUtil is available when no delegate is initialized")
-    public void noProviderUtilWithoutDelegate() {
-        assertThrows(IllegalStateException.class, () -> new TransactionUnitProvider().getProviderUtil());
+    @DisplayName("Provider from class path is guessed")
+    public void guessPersistenceProvider() {
+        assertThat(new TransactionUnitProvider().getProviderUtil().getClass().getName()).contains("hibernate");
     }
 
     @Test

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.persistence.EntityManagerFactory;
@@ -79,7 +80,7 @@ public class TransactionUnitProvider implements PersistenceProvider {
     @Override
     public ProviderUtil getProviderUtil() {
         if (delegate == null) {
-            throw new IllegalStateException("No persistence provider initialized");
+            return guessPersistenceProvider().getProviderUtil();
         }
         return delegate.getProviderUtil();
     }
@@ -109,6 +110,16 @@ public class TransactionUnitProvider implements PersistenceProvider {
             }
         }
         return Optional.ofNullable(delegate);
+    }
+
+    private PersistenceProvider guessPersistenceProvider() {
+        ServiceLoader<PersistenceProvider> persistenceProviders = ServiceLoader.load(PersistenceProvider.class);
+        return persistenceProviders
+                .stream()
+                .filter(persistenceProviderProvider -> !persistenceProviderProvider.type().equals(getClass()))
+                .map(ServiceLoader.Provider::get)
+                .findAny()
+                .orElseThrow(()-> new IllegalStateException("No persistence provider initialized"));
     }
 
     private Map<?, ?> filterProperties(Map<?, ?> properties) {
