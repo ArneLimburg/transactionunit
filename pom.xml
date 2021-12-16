@@ -5,7 +5,7 @@
 
   <groupId>org.transactionunit</groupId>
   <artifactId>transactionunit</artifactId>
-  <version>0.9.5-SNAPSHOT</version>
+  <version>0.9.5</version>
 
   <name>Transaction-Unit</name>
   <url>http://www.transactionunit.org</url>
@@ -24,7 +24,7 @@
     <url>https://github.com/ArneLimburg/transactionunit</url>
     <connection>scm:git:git://github.com/ArneLimburg/transactionunit.git</connection>
     <developerConnection>scm:git:https://github.com/ArneLimburg/transactionunit.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>0.9.5</tag>
   </scm>
 
   <developers>
