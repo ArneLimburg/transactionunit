@@ -37,6 +37,7 @@ public class TransactionUnitEntityManager implements EntityManager {
 
     private TransactionUnitEntityManagerFactory entityManagerFactory;
     private EntityManager delegate;
+    private boolean closed;
 
     public TransactionUnitEntityManager(TransactionUnitEntityManagerFactory factory, EntityManager entityManager) {
         entityManagerFactory = factory;
@@ -45,10 +46,13 @@ public class TransactionUnitEntityManager implements EntityManager {
 
     public void rollbackAndClose() {
         delegate.getTransaction().rollback();
-        delegate.close();
+        if (closed) {
+            delegate.close();
+        }
     }
 
     public void close() {
+        closed = true;
         delegate.clear();
         entityManagerFactory.release();
     }
