@@ -18,8 +18,5 @@ package org.transactionunit.spring;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.transactionunit.TestUser;
 
-/**
- * @author Olaf Prins - open knowledge GmbH
- */
 public interface TestUserJpaRepository extends JpaRepository<TestUser, Long> {
 }

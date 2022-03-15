@@ -37,6 +37,6 @@ public @interface RollbackAfterTest {
     enum Type {
         CLASS,
         METHOD,
-        EXECUTION;
+        EXECUTION
     }
 }

@@ -28,21 +28,21 @@ import org.transactionunit.RollbackAfterTest.Type;
 public class TransactionUnitExtension implements AfterAllCallback, AfterEachCallback, AfterTestExecutionCallback {
 
     @Override
-    public void afterTestExecution(ExtensionContext context) throws Exception {
+    public void afterTestExecution(ExtensionContext context) {
         if (getType(context) == Type.EXECUTION) {
             getInstance().rollbackAll();
         }
     }
 
     @Override
-    public void afterEach(ExtensionContext context) throws Exception {
+    public void afterEach(ExtensionContext context) {
         if (getType(context) == Type.METHOD) {
             getInstance().rollbackAll();
         }
     }
 
     @Override
-    public void afterAll(ExtensionContext context) throws Exception {
+    public void afterAll(ExtensionContext context) {
         if (getType(context) == Type.CLASS) {
             getInstance().rollbackAll();
         }

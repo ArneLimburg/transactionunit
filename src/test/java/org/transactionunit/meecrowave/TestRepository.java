@@ -23,7 +23,6 @@ import javax.persistence.PersistenceContext;
 
 import org.transactionunit.TestUser;
 
-
 @ApplicationScoped
 public class TestRepository {
 

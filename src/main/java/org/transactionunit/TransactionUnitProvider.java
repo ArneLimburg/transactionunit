@@ -18,6 +18,7 @@ package org.transactionunit;
 import static java.util.Optional.ofNullable;
 import static javax.persistence.spi.PersistenceProviderResolverHolder.getPersistenceProviderResolver;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,8 @@ import javax.persistence.spi.ProviderUtil;
 public class TransactionUnitProvider implements PersistenceProvider {
 
     public static final String PERSISTENCE_PROVIDER_PROPERTY = "org.transactionunit.persistence.provider";
-    private List<TransactionUnitEntityManagerFactory> entityManagerFactories = new CopyOnWriteArrayList<>();
+
+    private final List<TransactionUnitEntityManagerFactory> entityManagerFactories = new CopyOnWriteArrayList<>();
     private PersistenceProvider delegate;
 
     public static TransactionUnitProvider getInstance() {
@@ -49,22 +51,22 @@ public class TransactionUnitProvider implements PersistenceProvider {
     @Override
     public EntityManagerFactory createEntityManagerFactory(String emName, Map map) {
         return getDelegate(map)
-                .map(d -> d.createEntityManagerFactory(emName, filterProperties(map)))
-                .map(TransactionUnitEntityManagerFactory::new)
-                .orElse(null);
+            .map(d -> d.createEntityManagerFactory(emName, filterProperties(map)))
+            .map(TransactionUnitEntityManagerFactory::new)
+            .orElse(null);
     }
 
     @Override
     public EntityManagerFactory createContainerEntityManagerFactory(PersistenceUnitInfo info, Map map) {
-        Map mergedProperties = new HashMap<>(info.getProperties());
-        ofNullable(map).ifPresent(properties -> mergedProperties.putAll(properties));
+        Map<Object, Object> mergedProperties = new HashMap<>(info.getProperties());
+        ofNullable(map).ifPresent(mergedProperties::putAll);
         if (!mergedProperties.containsKey(PERSISTENCE_PROVIDER_PROPERTY)) {
             mergedProperties.put(PERSISTENCE_PROVIDER_PROPERTY, info.getPersistenceProviderClassName());
         }
         return getDelegate(mergedProperties)
-                .map(d -> d.createContainerEntityManagerFactory(info, filterProperties(mergedProperties)))
-                .map(TransactionUnitEntityManagerFactory::new)
-                .orElse(null);
+            .map(d -> d.createContainerEntityManagerFactory(info, filterProperties(mergedProperties)))
+            .map(TransactionUnitEntityManagerFactory::new)
+            .orElse(null);
     }
 
     @Override
@@ -99,12 +101,16 @@ public class TransactionUnitProvider implements PersistenceProvider {
 
     private Optional<PersistenceProvider> getDelegate(Map map) {
         if (delegate == null) {
-            Optional<String> providerName
-                = ofNullable(map).map(m -> (String)m.get(PERSISTENCE_PROVIDER_PROPERTY));
+            Optional<String> providerName = ofNullable(map)
+                .map(m -> (String)m.get(PERSISTENCE_PROVIDER_PROPERTY));
+
             if (providerName.isPresent()) {
                 try {
-                    delegate = (PersistenceProvider)Class.forName(providerName.get()).newInstance();
-                } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                    delegate = (PersistenceProvider)Class.forName(providerName.get())
+                        .getDeclaredConstructor()
+                        .newInstance();
+                } catch (InstantiationException | IllegalAccessException | ClassNotFoundException
+                    | NoSuchMethodException | InvocationTargetException e) {
                     throw new IllegalStateException(e);
                 }
             }
@@ -115,11 +121,11 @@ public class TransactionUnitProvider implements PersistenceProvider {
     private PersistenceProvider guessPersistenceProvider() {
         ServiceLoader<PersistenceProvider> persistenceProviders = ServiceLoader.load(PersistenceProvider.class);
         return persistenceProviders
-                .stream()
-                .filter(persistenceProviderProvider -> !persistenceProviderProvider.type().equals(getClass()))
-                .map(ServiceLoader.Provider::get)
-                .findAny()
-                .orElseThrow(()-> new IllegalStateException("No persistence provider initialized"));
+            .stream()
+            .filter(persistenceProviderProvider -> !persistenceProviderProvider.type().equals(getClass()))
+            .map(ServiceLoader.Provider::get)
+            .findAny()
+            .orElseThrow(() -> new IllegalStateException("No persistence provider initialized"));
     }
 
     private Map<?, ?> filterProperties(Map<?, ?> properties) {

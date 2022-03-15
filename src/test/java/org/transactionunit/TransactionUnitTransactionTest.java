@@ -27,7 +27,6 @@ public class TransactionUnitTransactionTest {
 
     @Test
     public void methodsAreDelegated() {
-
         EntityManager entityManager = mock(EntityManager.class);
         EntityTransaction delegate = mock(EntityTransaction.class);
         TransactionUnitTransaction transaction = new TransactionUnitTransaction(delegate, entityManager::flush);

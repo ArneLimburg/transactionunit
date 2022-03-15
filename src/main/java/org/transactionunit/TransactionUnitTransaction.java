@@ -19,8 +19,8 @@ import javax.persistence.EntityTransaction;
 
 public class TransactionUnitTransaction implements EntityTransaction {
 
-    private EntityTransaction delegate;
-    private Runnable flushAction;
+    private final EntityTransaction delegate;
+    private final Runnable flushAction;
 
     public TransactionUnitTransaction(EntityTransaction transaction, Runnable flush) {
         delegate = transaction;

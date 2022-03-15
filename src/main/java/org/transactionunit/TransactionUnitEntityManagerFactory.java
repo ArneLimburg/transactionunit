@@ -36,8 +36,8 @@ public class TransactionUnitEntityManagerFactory implements EntityManagerFactory
 
     private static final Logger LOG = Logger.getLogger(TransactionUnitEntityManagerFactory.class.getName());
 
+    private final Semaphore entityManagerSemaphore = new Semaphore(1);
     private EntityManagerFactory delegate;
-    private Semaphore entityManagerSemaphore = new Semaphore(1);
     private TransactionUnitEntityManager entityManager;
 
     public TransactionUnitEntityManagerFactory(EntityManagerFactory entityManagerFactory) {

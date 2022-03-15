@@ -19,6 +19,7 @@ import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
 public class UserDto {
+
     @JsonbProperty("name")
     private String name;
 

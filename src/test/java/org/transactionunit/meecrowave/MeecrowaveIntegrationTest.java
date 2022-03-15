@@ -45,7 +45,7 @@ import org.transactionunit.RollbackAfterTest;
 @RollbackAfterTest
 @PersistenceContext(unitName = "test-unit", properties = {
     @PersistenceProperty(name = "javax.persistence.provider", value = "io.github.arnelimburg.transactionunit.TransactionUnitProvider"),
-    @PersistenceProperty(name = PERSISTENCE_PROVIDER_PROPERTY, value = "org.hibernate.jpa.HibernatePersistenceProvider")} )
+    @PersistenceProperty(name = PERSISTENCE_PROVIDER_PROPERTY, value = "org.hibernate.jpa.HibernatePersistenceProvider")})
 public class MeecrowaveIntegrationTest {
 
     @ConfigurationInject
@@ -56,20 +56,21 @@ public class MeecrowaveIntegrationTest {
     public void testFirstRun() {
         Client client = ClientBuilder.newClient();
 
-        // BEFORE
+        // Given
         Response responseBefore = client.target(getBaseUrl()).request().get();
-        List<UserDto> usersBefore = responseBefore.readEntity(new GenericType<List<UserDto>>() { } );
+        List<UserDto> usersBefore = responseBefore.readEntity(new GenericType<>() {
+        });
         assertThat(usersBefore.size()).isEqualTo(0);
 
-        // WHEN
+        // When
         UserDto postedUser = new UserDto("John Doe");
         client.target(getBaseUrl()).request().post(Entity.entity(postedUser, MediaType.APPLICATION_JSON));
 
-        // THEN
+        // Then
         Response responseAfter = client.target(getBaseUrl()).request().get();
-        List<UserDto> usersAfter = responseAfter.readEntity(new GenericType<List<UserDto>>() { } );
+        List<UserDto> usersAfter = responseAfter.readEntity(new GenericType<>() {
+        });
         assertThat(usersAfter.stream().map(UserDto::getName)).containsExactly(postedUser.getName());
-
     }
 
     @Test
@@ -77,18 +78,20 @@ public class MeecrowaveIntegrationTest {
     public void testSecondRun() {
         Client client = ClientBuilder.newClient();
 
-        // BEFORE
+        // Given
         Response responseBefore = client.target(getBaseUrl()).request().get();
-        List<UserDto> usersBefore = responseBefore.readEntity(new GenericType<List<UserDto>>() { } );
+        List<UserDto> usersBefore = responseBefore.readEntity(new GenericType<>() {
+        });
         assertThat(usersBefore.size()).isEqualTo(0);
 
-        // WHEN
+        // When
         UserDto postedUser = new UserDto("Jane Doe");
         client.target(getBaseUrl()).request().post(Entity.entity(postedUser, MediaType.APPLICATION_JSON));
 
-        // THEN
+        // Then
         Response responseAfter = client.target(getBaseUrl()).request().get();
-        List<UserDto> usersAfter = responseAfter.readEntity(new GenericType<List<UserDto>>() { } );
+        List<UserDto> usersAfter = responseAfter.readEntity(new GenericType<>() {
+        });
         assertThat(usersAfter.stream().map(UserDto::getName)).containsExactly(postedUser.getName());
     }
 

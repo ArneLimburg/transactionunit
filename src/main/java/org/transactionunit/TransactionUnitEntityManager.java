@@ -35,8 +35,9 @@ import javax.persistence.metamodel.Metamodel;
 
 public class TransactionUnitEntityManager implements EntityManager {
 
-    private TransactionUnitEntityManagerFactory entityManagerFactory;
-    private EntityManager delegate;
+    private final TransactionUnitEntityManagerFactory entityManagerFactory;
+    private final EntityManager delegate;
+
     private boolean closed;
 
     public TransactionUnitEntityManager(TransactionUnitEntityManagerFactory factory, EntityManager entityManager) {
@@ -93,12 +94,12 @@ public class TransactionUnitEntityManager implements EntityManager {
         delegate.flush();
     }
 
-    public void setFlushMode(FlushModeType flushMode) {
-        delegate.setFlushMode(flushMode);
-    }
-
     public FlushModeType getFlushMode() {
         return delegate.getFlushMode();
+    }
+
+    public void setFlushMode(FlushModeType flushMode) {
+        delegate.setFlushMode(flushMode);
     }
 
     public void lock(Object entity, LockModeType lockMode) {
