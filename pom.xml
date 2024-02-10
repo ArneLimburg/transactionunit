@@ -66,11 +66,6 @@
 
     <meecrowave.version>1.2.12</meecrowave.version>
     <microjpa.version>1.1.2</microjpa.version>
-
-    <sonar.projectKey>ArneLimburg_transactionunit</sonar.projectKey>
-    <sonar.organization>arnelimburg-github</sonar.organization>
-    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.coverage.jacoco.xmlReportPaths>${project.build.outputDirectory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
   <dependencyManagement>
@@ -360,6 +355,11 @@
             <goals>
               <goal>report</goal>
             </goals>
+            <configuration>
+              <formats>
+                <format>XML</format>
+              </formats>
+            </configuration>
           </execution>
           <execution>
             <id>default-check</id>
