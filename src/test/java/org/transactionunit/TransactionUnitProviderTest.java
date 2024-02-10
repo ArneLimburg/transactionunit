@@ -20,9 +20,11 @@ import static javax.persistence.SharedCacheMode.UNSPECIFIED;
 import static javax.persistence.ValidationMode.AUTO;
 import static javax.persistence.spi.PersistenceUnitTransactionType.RESOURCE_LOCAL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_PROPERTY;
+import static org.transactionunit.TransactionUnitProvider.transactionUnitProviderNotFound;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -40,7 +42,6 @@ import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -84,7 +85,7 @@ public class TransactionUnitProviderTest {
         provider.createContainerEntityManagerFactory(new TestPersistenceUnitInfo(), null).close();
 
         EntityManagerFactory entityManagerFactory = provider.createEntityManagerFactory("test-unit", null);
-        Assertions.assertNotNull(entityManagerFactory.unwrap(SessionFactory.class));
+        assertNotNull(entityManagerFactory.unwrap(SessionFactory.class));
         entityManagerFactory.close();
     }
 
@@ -99,6 +100,14 @@ public class TransactionUnitProviderTest {
         provider.createContainerEntityManagerFactory(new TestPersistenceUnitInfo(), persistenceProperties);
         provider.generateSchema("test-unit", persistenceProperties);
         provider.generateSchema(new TestPersistenceUnitInfo(), persistenceProperties);
+    }
+
+    @Test
+    @DisplayName("IllegalStateException is thrown")
+    public void transactionUnitProviderNotFoundException() {
+        assertThrows(IllegalStateException.class, () -> {
+            throw transactionUnitProviderNotFound().get();
+        });
     }
 
     private static final class TestPersistenceUnitInfo implements PersistenceUnitInfo {

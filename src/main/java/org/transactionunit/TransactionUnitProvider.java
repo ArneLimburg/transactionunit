@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceProvider;
@@ -43,7 +44,7 @@ public class TransactionUnitProvider implements PersistenceProvider {
             .filter(TransactionUnitProvider.class::isInstance)
             .map(TransactionUnitProvider.class::cast)
             .findAny()
-            .get();
+            .orElseThrow(transactionUnitProviderNotFound());
     }
 
     @Override
@@ -83,6 +84,10 @@ public class TransactionUnitProvider implements PersistenceProvider {
             return guessPersistenceProvider().getProviderUtil();
         }
         return delegate.getProviderUtil();
+    }
+
+    static Supplier<? extends IllegalStateException> transactionUnitProviderNotFound() {
+        return () -> new IllegalStateException("TransactionUnitProvider not found");
     }
 
     void rollbackAll() {
