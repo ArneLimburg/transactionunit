@@ -15,10 +15,10 @@
  */
 package org.transactionunit;
 
+import static jakarta.persistence.SharedCacheMode.UNSPECIFIED;
+import static jakarta.persistence.ValidationMode.AUTO;
+import static jakarta.persistence.spi.PersistenceUnitTransactionType.RESOURCE_LOCAL;
 import static java.util.Collections.singletonMap;
-import static javax.persistence.SharedCacheMode.UNSPECIFIED;
-import static javax.persistence.ValidationMode.AUTO;
-import static javax.persistence.spi.PersistenceUnitTransactionType.RESOURCE_LOCAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,18 +32,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
-import javax.persistence.spi.ClassTransformer;
-import javax.persistence.spi.PersistenceUnitInfo;
-import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
+import jakarta.persistence.spi.ClassTransformer;
+import jakarta.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.spi.PersistenceUnitTransactionType;
 
 public class TransactionUnitProviderTest {
 
@@ -175,11 +176,11 @@ public class TransactionUnitProviderTest {
         @Override
         public Properties getProperties() {
             Properties properties = new Properties();
-            properties.put("javax.persistence.jdbc.driver", "org.h2.Driver");
-            properties.put("javax.persistence.jdbc.url", "jdbc:h2:mem:test");
-            properties.put("javax.persistence.jdbc.user", "sa");
-            properties.put("javax.persistence.jdbc.password", "");
-            properties.put("javax.persistence.jdbc.schema-generation.database.action", "drop-and-create");
+            properties.put("jakarta.persistence.jdbc.driver", "org.h2.Driver");
+            properties.put("jakarta.persistence.jdbc.url", "jdbc:h2:mem:test");
+            properties.put("jakarta.persistence.jdbc.user", "sa");
+            properties.put("jakarta.persistence.jdbc.password", "");
+            properties.put("jakarta.persistence.jdbc.schema-generation.database.action", "drop-and-create");
             properties.put("hibernate.jpa.compliance.transaction", "true");
             return properties;
         }

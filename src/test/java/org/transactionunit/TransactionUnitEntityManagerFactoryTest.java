@@ -15,8 +15,8 @@
  */
 package org.transactionunit;
 
+import static jakarta.persistence.SynchronizationType.UNSYNCHRONIZED;
 import static java.util.Collections.emptyMap;
-import static javax.persistence.SynchronizationType.UNSYNCHRONIZED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -25,14 +25,14 @@ import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
-import javax.persistence.SynchronizationType;
-
 import org.junit.jupiter.api.Test;
+
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
+import jakarta.persistence.SynchronizationType;
 
 public class TransactionUnitEntityManagerFactoryTest {
 
