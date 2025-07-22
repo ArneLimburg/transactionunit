@@ -17,11 +17,11 @@ package org.transactionunit.meecrowave;
 
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.transactionunit.TestUser;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 
 @ApplicationScoped

@@ -11,19 +11,19 @@
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
     <properties>
       <property
-        name="javax.persistence.jdbc.driver"
+        name="jakarta.persistence.jdbc.driver"
         value="org.h2.Driver" />
       <property
-        name="javax.persistence.jdbc.url"
+        name="jakarta.persistence.jdbc.url"
         value="jdbc:h2:mem:test" />
       <property
-        name="javax.persistence.jdbc.user"
+        name="jakarta.persistence.jdbc.user"
         value="sa" />
       <property
-        name="javax.persistence.jdbc.password"
+        name="jakarta.persistence.jdbc.password"
         value="" />
       <property
-        name="javax.persistence.schema-generation.database.action"
+        name="jakarta.persistence.schema-generation.database.action"
         value="drop-and-create" />
       <property
         name="hibernate.jpa.compliance.transaction"

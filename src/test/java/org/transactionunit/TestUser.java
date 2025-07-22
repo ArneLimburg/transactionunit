@@ -17,10 +17,10 @@ package org.transactionunit;
 
 import static org.transactionunit.TestUser.FIND_ALL;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 
 @Entity
 @NamedQuery(name = FIND_ALL, query = "SELECT u FROM TestUser u")

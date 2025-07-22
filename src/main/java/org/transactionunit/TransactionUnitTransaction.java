@@ -15,7 +15,7 @@
  */
 package org.transactionunit;
 
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityTransaction;
 
 public class TransactionUnitTransaction implements EntityTransaction {
 

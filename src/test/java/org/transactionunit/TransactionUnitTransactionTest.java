@@ -18,10 +18,10 @@ package org.transactionunit;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
 import org.junit.jupiter.api.Test;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
 public class TransactionUnitTransactionTest {
 

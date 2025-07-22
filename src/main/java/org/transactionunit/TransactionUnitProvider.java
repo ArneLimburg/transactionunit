@@ -16,7 +16,7 @@
 package org.transactionunit;
 
 import static java.util.Optional.ofNullable;
-import static javax.persistence.spi.PersistenceProviderResolverHolder.getPersistenceProviderResolver;
+import static jakarta.persistence.spi.PersistenceProviderResolverHolder.getPersistenceProviderResolver;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,10 +26,10 @@ import java.util.ServiceLoader;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
-import javax.persistence.spi.PersistenceUnitInfo;
-import javax.persistence.spi.ProviderUtil;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceProvider;
+import jakarta.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.spi.ProviderUtil;
 
 public class TransactionUnitProvider implements PersistenceProvider {
 
@@ -131,7 +131,7 @@ public class TransactionUnitProvider implements PersistenceProvider {
         Optional<String> persistenceProviderClassName = ofNullable(properties).map(p -> (String)p.get(PERSISTENCE_PROVIDER_PROPERTY));
         if (persistenceProviderClassName.isPresent()) {
             Map filteredProperties = new HashMap<>(properties);
-            filteredProperties.put("javax.persistence.provider", persistenceProviderClassName.get());
+            filteredProperties.put("jakarta.persistence.provider", persistenceProviderClassName.get());
             return filteredProperties;
         } else {
             return properties;

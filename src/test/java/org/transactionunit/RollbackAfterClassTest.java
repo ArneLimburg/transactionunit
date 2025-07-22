@@ -22,14 +22,14 @@ import static org.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_P
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 @RollbackAfterTest(CLASS)
 public class RollbackAfterClassTest {
@@ -39,7 +39,7 @@ public class RollbackAfterClassTest {
     @BeforeAll
     public static void createEntityManagerFactory() {
         Map<String, String> persistenceProperties = new HashMap<>();
-        persistenceProperties.put("javax.persistence.provider", TransactionUnitProvider.class.getName());
+        persistenceProperties.put("jakarta.persistence.provider", TransactionUnitProvider.class.getName());
         persistenceProperties.put(PERSISTENCE_PROVIDER_PROPERTY, HibernatePersistenceProvider.class.getName());
         entityManagerFactory = Persistence.createEntityManagerFactory("test-unit", persistenceProperties);
 

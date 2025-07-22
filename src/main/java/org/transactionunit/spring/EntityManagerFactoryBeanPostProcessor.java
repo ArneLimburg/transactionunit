@@ -15,11 +15,11 @@
  */
 package org.transactionunit.spring;
 
-import javax.persistence.EntityManagerFactory;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.transactionunit.TransactionUnitEntityManagerFactory;
+
+import jakarta.persistence.EntityManagerFactory;
 
 public class EntityManagerFactoryBeanPostProcessor implements BeanPostProcessor {
 

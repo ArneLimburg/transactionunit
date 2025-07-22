@@ -21,16 +21,6 @@ import static org.transactionunit.TransactionUnitProvider.PERSISTENCE_PROVIDER_P
 
 import java.util.List;
 
-import javax.enterprise.context.Dependent;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceProperty;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.apache.meecrowave.Meecrowave;
 import org.apache.meecrowave.junit5.MeecrowaveConfig;
 import org.apache.meecrowave.testing.ConfigurationInject;
@@ -39,12 +29,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.transactionunit.RollbackAfterTest;
 
+import jakarta.enterprise.context.Dependent;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceProperty;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 @Dependent
 @MeecrowaveConfig
 @TestInstance(PER_CLASS)
 @RollbackAfterTest
 @PersistenceContext(unitName = "test-unit", properties = {
-    @PersistenceProperty(name = "javax.persistence.provider", value = "io.github.arnelimburg.transactionunit.TransactionUnitProvider"),
+    @PersistenceProperty(name = "jakarta.persistence.provider", value = "io.github.arnelimburg.transactionunit.TransactionUnitProvider"),
     @PersistenceProperty(name = PERSISTENCE_PROVIDER_PROPERTY, value = "org.hibernate.jpa.HibernatePersistenceProvider")} )
 public class MeecrowaveIntegrationTest {
 
