@@ -1,6 +1,8 @@
 [![maintained](https://img.shields.io/badge/Maintained-yes-brightgreen.svg)](https://github.com/ArneLimburg/transactionunit/graphs/commit-activity)
 ![Maven Central Version](https://img.shields.io/maven-central/v/org.transactionunit/transactionunit)
-![build](https://github.com/ArneLimburg/transactionunit/workflows/build/badge.svg) 
+![build](https://github.com/ArneLimburg/transactionunit/workflows/build/badge.svg)
+![Method Coverage](https://img.shields.io/badge/method%20coverage-100%25-brightgreen)
+![Branch Coverage](https://img.shields.io/badge/branch%20coverage-95%25-brightgreen)
 [![Liberapay](https://img.shields.io/badge/Liberapay-Donate-%23f6c915.svg)](https://liberapay.com/arnelimburg)
 [![Ko-Fi](https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee!-%2346b798.svg)](https://ko-fi.com/arnelimburg)
 
