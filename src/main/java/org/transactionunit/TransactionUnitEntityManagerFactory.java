@@ -112,7 +112,14 @@ public class TransactionUnitEntityManagerFactory implements EntityManagerFactory
         delegate.addNamedEntityGraph(graphName, entityGraph);
     }
 
-    void rollbackAll() {
+    public boolean isRollbackOnly() {
+        if (entityManager != null) {
+            return entityManager.getTransaction().getRollbackOnly();
+        }
+        return false;
+    }
+
+    public void rollbackAll() {
         if (entityManagerSemaphore.availablePermits() == 0) {
             LOG.info("Stale EntityManager found, releasing");
             release();

@@ -23,14 +23,17 @@ import jakarta.persistence.EntityManagerFactory;
 
 public class EntityManagerFactoryBeanPostProcessor implements BeanPostProcessor {
 
+    private TransactionUnitEntityManagerFactory entityManagerFactory;
+
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        if (!(bean instanceof EntityManagerFactory)) {
-            return bean;
+        if (bean instanceof EntityManagerFactory emf) {
+            entityManagerFactory = new TransactionUnitEntityManagerFactory(emf);
+            return entityManagerFactory;
         }
-
-        EntityManagerFactory emf = (EntityManagerFactory)bean;
-
-        return new TransactionUnitEntityManagerFactory(emf);
+        if (entityManagerFactory != null && entityManagerFactory.isRollbackOnly()) {
+            entityManagerFactory.rollbackAll();
+        }
+        return bean;
     }
 }

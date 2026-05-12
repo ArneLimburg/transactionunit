@@ -15,6 +15,8 @@
  */
 package org.transactionunit.spring;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.transactionunit.TestUser;
 
@@ -22,4 +24,6 @@ import org.transactionunit.TestUser;
  * @author Olaf Prins - open knowledge GmbH
  */
 public interface TestUserJpaRepository extends JpaRepository<TestUser, Long> {
+
+    Optional<TestUser> findByName(String name);
 }
