@@ -1,6 +1,5 @@
 [![maintained](https://img.shields.io/badge/Maintained-yes-brightgreen.svg)](https://github.com/ArneLimburg/transactionunit/graphs/commit-activity)
 [![Maven Central Version](https://img.shields.io/maven-central/v/org.transactionunit/transactionunit)](https://central.sonatype.com/artifact/org.transactionunit/transactionunit)
-![Maven Central Version](https://img.shields.io/maven-central/v/org.transactionunit/transactionunit)
 ![build](https://github.com/ArneLimburg/transactionunit/workflows/build/badge.svg)
 [![Method Coverage](https://img.shields.io/badge/method%20coverage-100%25-brightgreen)](https://github.com/ArneLimburg/transactionunit/blob/main/pom.xml#L479)
 [![Branch Coverage](https://img.shields.io/badge/branch%20coverage-95%25-brightgreen)](https://github.com/ArneLimburg/transactionunit/blob/main/pom.xml#L495)
