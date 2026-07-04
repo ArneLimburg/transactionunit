@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.transactionunit.RollbackAfterTest.Type.METHOD;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -47,7 +48,7 @@ public class TransactionUnitEntityManagerTest {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(delegate.getTransaction()).thenReturn(transaction);
         TransactionUnitEntityManager entityManager
-            = new TransactionUnitEntityManager(mock(TransactionUnitEntityManagerFactory.class), delegate);
+            = new TransactionUnitEntityManager(mock(TransactionUnitEntityManagerFactory.class), delegate, UUID.randomUUID().toString());
 
         entityManager.persist(new Object());
         verify(delegate).persist(any(Object.class));
@@ -95,7 +96,7 @@ public class TransactionUnitEntityManagerTest {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(delegate.getTransaction()).thenReturn(transaction);
         TransactionUnitEntityManager entityManager
-            = new TransactionUnitEntityManager(mock(TransactionUnitEntityManagerFactory.class), delegate);
+            = new TransactionUnitEntityManager(mock(TransactionUnitEntityManagerFactory.class), delegate,  UUID.randomUUID().toString());
 
         entityManager.find(Class.class, new Object());
         verify(delegate).find(any(Class.class), Mockito.any(Object.class));
@@ -179,7 +180,7 @@ public class TransactionUnitEntityManagerTest {
         EntityTransaction transaction = mock(EntityTransaction.class);
         when(delegate.getTransaction()).thenReturn(transaction);
         TransactionUnitEntityManager entityManager
-            = new TransactionUnitEntityManager(mock(TransactionUnitEntityManagerFactory.class), delegate);
+            = new TransactionUnitEntityManager(mock(TransactionUnitEntityManagerFactory.class), delegate,  UUID.randomUUID().toString());
 
         entityManager.flush();
         verify(delegate).flush();

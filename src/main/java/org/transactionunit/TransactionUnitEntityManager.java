@@ -37,11 +37,15 @@ public class TransactionUnitEntityManager implements EntityManager {
 
     private TransactionUnitEntityManagerFactory entityManagerFactory;
     private EntityManager delegate;
+    private String executionContextName;
+    private EntityTransaction transaction;
+    public TransactionUnitEntityManager() {}
     private boolean closed;
 
-    public TransactionUnitEntityManager(TransactionUnitEntityManagerFactory factory, EntityManager entityManager) {
+    public TransactionUnitEntityManager(TransactionUnitEntityManagerFactory factory, EntityManager entityManager, String ec) {
         entityManagerFactory = factory;
         delegate = entityManager;
+        executionContextName = ec;
     }
 
     public void rollbackAndClose() {
@@ -255,5 +259,8 @@ public class TransactionUnitEntityManager implements EntityManager {
 
     public <T> List<EntityGraph<? super T>> getEntityGraphs(Class<T> entityClass) {
         return delegate.getEntityGraphs(entityClass);
+    }
+    public String getExecutionContextName() {
+        return this.executionContextName;
     }
 }
