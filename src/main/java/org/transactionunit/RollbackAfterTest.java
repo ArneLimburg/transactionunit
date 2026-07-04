@@ -34,6 +34,10 @@ public @interface RollbackAfterTest {
 
     Type value() default Type.EXECUTION;
 
+    String remoteUrl() default "";
+
+    String remoteUrlProperty() default "";
+
     enum Type {
         CLASS,
         METHOD,
