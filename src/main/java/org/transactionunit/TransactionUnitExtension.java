@@ -15,9 +15,16 @@
  */
 package org.transactionunit;
 
-import static java.util.Optional.ofNullable;
 import static org.junit.platform.commons.util.AnnotationUtils.findAnnotation;
 import static org.transactionunit.TransactionUnitProvider.getInstance;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.Optional;
 
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -27,32 +34,59 @@ import org.transactionunit.RollbackAfterTest.Type;
 
 public class TransactionUnitExtension implements AfterAllCallback, AfterEachCallback, AfterTestExecutionCallback {
 
+    private static final Duration REMOTE_ROLLBACK_TIMEOUT = Duration.ofSeconds(10);
+    private static final int HTTP_ERROR_STATUS = 400;
+
     @Override
-    public void afterTestExecution(ExtensionContext context) throws Exception {
-        if (getType(context) == Type.EXECUTION) {
-            getInstance().rollbackAll();
-        }
+    public void afterTestExecution(ExtensionContext context) throws IOException, InterruptedException {
+        rollbackIfMatches(context, Type.EXECUTION);
     }
 
     @Override
-    public void afterEach(ExtensionContext context) throws Exception {
-        if (getType(context) == Type.METHOD) {
-            getInstance().rollbackAll();
-        }
+    public void afterEach(ExtensionContext context) throws IOException, InterruptedException {
+        rollbackIfMatches(context, Type.METHOD);
     }
 
     @Override
-    public void afterAll(ExtensionContext context) throws Exception {
-        if (getType(context) == Type.CLASS) {
-            getInstance().rollbackAll();
+    public void afterAll(ExtensionContext context) throws IOException, InterruptedException {
+        rollbackIfMatches(context, Type.CLASS);
+    }
+
+    private void rollbackIfMatches(ExtensionContext context, Type expected) throws IOException, InterruptedException {
+        Optional<RollbackAfterTest> annotation = findRollbackAnnotation(context);
+        Type type = annotation.map(RollbackAfterTest::value).orElse(Type.METHOD);
+        if (type != expected) {
+            return;
+        }
+        getInstance().rollbackAll();
+        Optional<URI> remoteUrl = annotation.flatMap(TransactionUnitExtension::resolveRemoteUrl);
+        if (remoteUrl.isPresent()) {
+            rollbackRemote(remoteUrl.get());
         }
     }
 
-    private Type getType(ExtensionContext context) {
-        return ofNullable(
-                findAnnotation(context.getTestMethod(), RollbackAfterTest.class)
-                .orElse(findAnnotation(context.getTestClass(), RollbackAfterTest.class)
-                .orElse(null))).map(RollbackAfterTest::value)
-        .orElse(Type.METHOD);
+    private Optional<RollbackAfterTest> findRollbackAnnotation(ExtensionContext context) {
+        return findAnnotation(context.getTestMethod(), RollbackAfterTest.class)
+            .or(() -> findAnnotation(context.getTestClass(), RollbackAfterTest.class));
+    }
+
+    private static Optional<URI> resolveRemoteUrl(RollbackAfterTest annotation) {
+        String url = annotation.remoteUrl();
+        if (url.isEmpty() && !annotation.remoteUrlProperty().isEmpty()) {
+            url = System.getProperty(annotation.remoteUrlProperty(), "");
+        }
+        return url.isEmpty() ? Optional.empty() : Optional.of(URI.create(url));
+    }
+
+    static void rollbackRemote(URI uri) throws IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder(uri)
+            .timeout(REMOTE_ROLLBACK_TIMEOUT)
+            .DELETE()
+            .build();
+        HttpResponse<Void> response = HttpClient.newHttpClient()
+            .send(request, HttpResponse.BodyHandlers.discarding());
+        if (response.statusCode() >= HTTP_ERROR_STATUS) {
+            throw new IOException("Remote rollback at " + uri + " returned HTTP " + response.statusCode());
+        }
     }
 }

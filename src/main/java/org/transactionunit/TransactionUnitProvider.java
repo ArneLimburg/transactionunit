@@ -34,10 +34,19 @@ import jakarta.persistence.spi.ProviderUtil;
 public class TransactionUnitProvider implements PersistenceProvider {
 
     public static final String PERSISTENCE_PROVIDER_PROPERTY = "org.transactionunit.persistence.provider";
+    private static volatile TransactionUnitProvider instance;
     private List<TransactionUnitEntityManagerFactory> entityManagerFactories = new CopyOnWriteArrayList<>();
     private PersistenceProvider delegate;
 
+    public TransactionUnitProvider() {
+        instance = this;
+    }
+
     public static TransactionUnitProvider getInstance() {
+        TransactionUnitProvider local = instance;
+        if (local != null) {
+            return local;
+        }
         return getPersistenceProviderResolver()
             .getPersistenceProviders()
             .stream()
@@ -90,7 +99,7 @@ public class TransactionUnitProvider implements PersistenceProvider {
         return () -> new IllegalStateException("TransactionUnitProvider not found");
     }
 
-    void rollbackAll() {
+    public void rollbackAll() {
         entityManagerFactories.forEach(TransactionUnitEntityManagerFactory::rollbackAll);
     }
 
@@ -105,7 +114,9 @@ public class TransactionUnitProvider implements PersistenceProvider {
     private Optional<PersistenceProvider> getDelegate(Map map) {
         if (delegate == null) {
             Optional<String> providerName
-                = ofNullable(map).map(m -> (String)m.get(PERSISTENCE_PROVIDER_PROPERTY));
+                = ofNullable(map).map(m -> (String)m.get(PERSISTENCE_PROVIDER_PROPERTY))
+                .or(() -> ofNullable(System.getProperty(PERSISTENCE_PROVIDER_PROPERTY)))
+                .or(() -> ofNullable(System.getenv(toEnvName(PERSISTENCE_PROVIDER_PROPERTY))));
             if (providerName.isPresent()) {
                 try {
                     delegate = (PersistenceProvider)Class.forName(providerName.get()).newInstance();
@@ -115,6 +126,10 @@ public class TransactionUnitProvider implements PersistenceProvider {
             }
         }
         return Optional.ofNullable(delegate);
+    }
+
+    private static String toEnvName(String property) {
+        return property.replace('.', '_').toUpperCase();
     }
 
     private PersistenceProvider guessPersistenceProvider() {
