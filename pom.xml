@@ -335,6 +335,11 @@ under the License.
               <resources>
                 <resource>
                   <directory>src/test/wildfly/src/main/resources</directory>
+                  <filtering>false</filtering>
+                </resource>
+                <resource>
+                  <directory>src/test/wildfly/docker</directory>
+                  <filtering>true</filtering>
                 </resource>
               </resources>
             </configuration>

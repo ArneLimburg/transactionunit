@@ -55,13 +55,13 @@
         <dependency>
           <groupId>org.transactionunit</groupId>
           <artifactId>transactionunit</artifactId>
-          <version>1.1.0</version>
+          <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.transactionunit</groupId>
           <artifactId>transactionunit</artifactId>
-          <version>1.1.0</version>
-          <classifier>web</classifier>
+          <version>${project.version}</version>
+          <classifier>http</classifier>
         </dependency>
       </dependencies>
     </profile>
