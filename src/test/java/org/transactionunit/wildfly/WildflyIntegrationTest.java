@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
@@ -46,7 +45,6 @@ import org.transactionunit.RollbackAfterTest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Disabled
 @Testcontainers
 @RollbackAfterTest(remoteUrlProperty = WildflyIntegrationTest.ROLLBACK_URL_PROPERTY)
 public class WildflyIntegrationTest {
@@ -62,8 +60,12 @@ public class WildflyIntegrationTest {
 
     private static final ImageFromDockerfile WILDFLY_IMAGE
         = new ImageFromDockerfile("transactionunit-wildfly-test", false)
-        .withFileFromPath(".", Paths.get("."))
-        .withDockerfilePath("src/test/wildfly/Dockerfile");
+        .withFileFromPath("pom.xml", Paths.get("pom.xml"))
+        .withFileFromPath("src/main", Paths.get("src/main"))
+        .withFileFromPath("src/test/wildfly/src", Paths.get("src/test/wildfly/src"))
+        .withFileFromPath("target/test-classes/wildfly-pom.xml", Paths.get("target/test-classes/wildfly-pom.xml"))
+        .withFileFromPath("target/test-classes/Dockerfile.wildfly", Paths.get("target/test-classes/Dockerfile.wildfly"))
+        .withBuildImageCmdModifier(cmd -> cmd.withDockerfilePath("target/test-classes/Dockerfile.wildfly"));
 
     @Container
     private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
