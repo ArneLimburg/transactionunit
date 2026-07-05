@@ -107,7 +107,6 @@ under the License.
     <dependency>
       <groupId>jakarta.persistence</groupId>
       <artifactId>jakarta.persistence-api</artifactId>
-      <version>3.1.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -119,7 +118,6 @@ under the License.
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
-      <version>6.0.0</version>
       <scope>provided</scope>
       <optional>true</optional>
     </dependency>
@@ -324,8 +322,21 @@ under the License.
             <configuration>
               <sources>
                 <source>src/test/wildfly/src/main/java</source>
-                <source>src/test/wildfly/src/main/java-transactionunit</source>
               </sources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add-wildfly-test-resource</id>
+            <phase>generate-test-resources</phase>
+            <goals>
+              <goal>add-test-resource</goal>
+            </goals>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>src/test/wildfly/src/main/resources</directory>
+                </resource>
+              </resources>
             </configuration>
           </execution>
         </executions>
@@ -354,11 +365,6 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.3</version>
-        <configuration>
-          <excludes>
-            <exclude>**/*IntegrationTest.java</exclude>
-          </excludes>
-        </configuration>
         <executions>
           <execution>
             <id>default-test</id>
@@ -380,27 +386,6 @@ under the License.
               </classpathDependencyExcludes>
               <groups>without-hibernate</groups>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>3.5.3</version>
-        <configuration>
-          <includes>
-            <include>**/*IntegrationTest.java</include>
-          </includes>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${project.build.directory}/${project.build.finalName}-http.jar</additionalClasspathElement>
-          </additionalClasspathElements>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
