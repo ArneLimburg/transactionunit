@@ -392,7 +392,7 @@ under the License.
             <include>**/*IntegrationTest.java</include>
           </includes>
           <additionalClasspathElements>
-            <additionalClasspathElement>${project.build.directory}/${project.build.finalName}-web.jar</additionalClasspathElement>
+            <additionalClasspathElement>${project.build.directory}/${project.build.finalName}-http.jar</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
         <executions>
@@ -420,13 +420,13 @@ under the License.
             </configuration>
           </execution>
           <execution>
-            <id>web</id>
+            <id>http</id>
             <phase>package</phase>
             <goals>
               <goal>jar</goal>
             </goals>
             <configuration>
-              <classifier>web</classifier>
+              <classifier>http</classifier>
               <includes>**/http/**</includes>
             </configuration>
           </execution>

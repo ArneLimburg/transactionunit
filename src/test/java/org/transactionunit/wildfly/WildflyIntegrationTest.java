@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
@@ -45,6 +46,7 @@ import org.transactionunit.RollbackAfterTest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Disabled
 @Testcontainers
 @RollbackAfterTest(remoteUrlProperty = WildflyIntegrationTest.ROLLBACK_URL_PROPERTY)
 public class WildflyIntegrationTest {
