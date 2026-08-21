@@ -58,4 +58,14 @@ public class TransactionUnitTransaction implements EntityTransaction {
     public boolean isActive() {
         return delegate.isActive();
     }
+
+    @Override
+    public Integer getTimeout() {
+        return delegate.getTimeout();
+    }
+
+    @Override
+    public void setTimeout(Integer timeout) {
+        delegate.setTimeout(timeout);
+    }
 }

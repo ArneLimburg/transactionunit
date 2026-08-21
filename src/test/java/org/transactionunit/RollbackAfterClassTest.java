@@ -43,11 +43,11 @@ public class RollbackAfterClassTest {
         persistenceProperties.put(PERSISTENCE_PROVIDER_PROPERTY, HibernatePersistenceProvider.class.getName());
         entityManagerFactory = Persistence.createEntityManagerFactory("test-unit", persistenceProperties);
 
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-        entityManager.persist(new TestUser("John Doe"));
-        entityManager.getTransaction().commit();
-        entityManager.close();
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            entityManager.getTransaction().begin();
+            entityManager.persist(new TestUser("John Doe"));
+            entityManager.getTransaction().commit();
+        }
     }
 
     @Test

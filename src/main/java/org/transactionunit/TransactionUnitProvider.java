@@ -27,6 +27,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceConfiguration;
 import jakarta.persistence.spi.PersistenceProvider;
 import jakarta.persistence.spi.PersistenceUnitInfo;
 import jakarta.persistence.spi.ProviderUtil;
@@ -60,6 +61,23 @@ public class TransactionUnitProvider implements PersistenceProvider {
     public EntityManagerFactory createEntityManagerFactory(String emName, Map map) {
         return getDelegate(map)
                 .map(d -> d.createEntityManagerFactory(emName, filterProperties(map)))
+                .map(TransactionUnitEntityManagerFactory::new)
+                .orElse(null);
+    }
+
+    @Override
+    public EntityManagerFactory createEntityManagerFactory(PersistenceConfiguration configuration) {
+        Map mergedProperties = new HashMap<>(configuration.properties());
+        // Unlike a PersistenceUnitInfo, a PersistenceConfiguration has a single provider only, and that provider
+        // has to be this one for this provider to be called at all. Using it as the delegate as well would make
+        // this method call itself until the stack overflows, so the real provider has to be guessed instead.
+        if (!mergedProperties.containsKey(PERSISTENCE_PROVIDER_PROPERTY) && !isOwnProvider(configuration.provider())) {
+            mergedProperties.put(PERSISTENCE_PROVIDER_PROPERTY, configuration.provider());
+        }
+        PersistenceProvider persistenceProvider = getDelegate(mergedProperties).orElseGet(this::initializeGuessedDelegate);
+        PersistenceConfiguration configurationForDelegate
+            = delegateConfiguration(configuration, persistenceProvider, filterProperties(mergedProperties));
+        return ofNullable(persistenceProvider.createEntityManagerFactory(configurationForDelegate))
                 .map(TransactionUnitEntityManagerFactory::new)
                 .orElse(null);
     }
@@ -132,6 +150,15 @@ public class TransactionUnitProvider implements PersistenceProvider {
         return property.replace('.', '_').toUpperCase();
     }
 
+    private boolean isOwnProvider(String providerClassName) {
+        return getClass().getName().equals(providerClassName);
+    }
+
+    private PersistenceProvider initializeGuessedDelegate() {
+        delegate = guessPersistenceProvider();
+        return delegate;
+    }
+
     private PersistenceProvider guessPersistenceProvider() {
         ServiceLoader<PersistenceProvider> persistenceProviders = ServiceLoader.load(PersistenceProvider.class);
         return persistenceProviders
@@ -151,5 +178,20 @@ public class TransactionUnitProvider implements PersistenceProvider {
         } else {
             return properties;
         }
+    }
+
+    private PersistenceConfiguration delegateConfiguration(
+        PersistenceConfiguration configuration, PersistenceProvider persistenceProvider, Map<?, ?> properties) {
+        PersistenceConfiguration configurationCopy = new PersistenceConfiguration(configuration.name())
+            .provider(persistenceProvider.getClass().getName())
+            .jtaDataSource(configuration.jtaDataSource())
+            .nonJtaDataSource(configuration.nonJtaDataSource())
+            .transactionType(configuration.transactionType())
+            .sharedCacheMode(configuration.sharedCacheMode())
+            .validationMode(configuration.validationMode())
+            .properties((Map<String, ?>)properties);
+        configuration.managedClasses().forEach(configurationCopy::managedClass);
+        configuration.mappingFiles().forEach(configurationCopy::mappingFile);
+        return configurationCopy;
     }
 }
