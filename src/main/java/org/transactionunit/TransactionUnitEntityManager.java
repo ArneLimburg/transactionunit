@@ -18,18 +18,27 @@ package org.transactionunit;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.persistence.CacheRetrieveMode;
+import jakarta.persistence.CacheStoreMode;
+import jakarta.persistence.ConnectionConsumer;
+import jakarta.persistence.ConnectionFunction;
 import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.FindOption;
 import jakarta.persistence.FlushModeType;
 import jakarta.persistence.LockModeType;
+import jakarta.persistence.LockOption;
 import jakarta.persistence.Query;
+import jakarta.persistence.RefreshOption;
 import jakarta.persistence.StoredProcedureQuery;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.TypedQueryReference;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaSelect;
 import jakarta.persistence.criteria.CriteriaUpdate;
 import jakarta.persistence.metamodel.Metamodel;
 
@@ -45,10 +54,20 @@ public class TransactionUnitEntityManager implements EntityManager {
     }
 
     public void rollbackAndClose() {
-        delegate.getTransaction().rollback();
+        if (delegate.getTransaction().isActive()) {
+            delegate.getTransaction().rollback();
+        }
         if (closed) {
             delegate.close();
         }
+    }
+
+    boolean isClosed() {
+        return closed;
+    }
+
+    void reopen() {
+        closed = false;
     }
 
     public void close() {
@@ -255,5 +274,57 @@ public class TransactionUnitEntityManager implements EntityManager {
 
     public <T> List<EntityGraph<? super T>> getEntityGraphs(Class<T> entityClass) {
         return delegate.getEntityGraphs(entityClass);
+    }
+
+    public <T> T find(Class<T> entityClass, Object primaryKey, FindOption... options) {
+        return delegate.find(entityClass, primaryKey, options);
+    }
+
+    public <T> T find(EntityGraph<T> entityGraph, Object primaryKey, FindOption... options) {
+        return delegate.find(entityGraph, primaryKey, options);
+    }
+
+    public <T> T getReference(T entity) {
+        return delegate.getReference(entity);
+    }
+
+    public void lock(Object entity, LockModeType lockMode, LockOption... options) {
+        delegate.lock(entity, lockMode, options);
+    }
+
+    public void refresh(Object entity, RefreshOption... options) {
+        delegate.refresh(entity, options);
+    }
+
+    public void setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        delegate.setCacheRetrieveMode(cacheRetrieveMode);
+    }
+
+    public void setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        delegate.setCacheStoreMode(cacheStoreMode);
+    }
+
+    public CacheRetrieveMode getCacheRetrieveMode() {
+        return delegate.getCacheRetrieveMode();
+    }
+
+    public CacheStoreMode getCacheStoreMode() {
+        return delegate.getCacheStoreMode();
+    }
+
+    public <T> TypedQuery<T> createQuery(CriteriaSelect<T> selectQuery) {
+        return delegate.createQuery(selectQuery);
+    }
+
+    public <T> TypedQuery<T> createQuery(TypedQueryReference<T> reference) {
+        return delegate.createQuery(reference);
+    }
+
+    public <C> void runWithConnection(ConnectionConsumer<C> action) {
+        delegate.runWithConnection(action);
+    }
+
+    public <C, T> T callWithConnection(ConnectionFunction<C, T> function) {
+        return delegate.callWithConnection(function);
     }
 }

@@ -18,6 +18,7 @@ package org.transactionunit;
 import static jakarta.persistence.SharedCacheMode.UNSPECIFIED;
 import static jakarta.persistence.ValidationMode.AUTO;
 import static jakarta.persistence.spi.PersistenceUnitTransactionType.RESOURCE_LOCAL;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -183,6 +184,16 @@ public class TransactionUnitProviderTest {
             properties.put("jakarta.persistence.jdbc.schema-generation.database.action", "drop-and-create");
             properties.put("hibernate.jpa.compliance.transaction", "true");
             return properties;
+        }
+
+        @Override
+        public String getScopeAnnotationName() {
+            return null;
+        }
+
+        @Override
+        public List<String> getQualifierAnnotationNames() {
+            return emptyList();
         }
 
         @Override

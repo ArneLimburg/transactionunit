@@ -35,15 +35,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.transactionunit.RollbackAfterTest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 @Testcontainers
 @RollbackAfterTest(remoteUrlProperty = WildflyIntegrationTest.ROLLBACK_URL_PROPERTY)
@@ -68,7 +68,7 @@ public class WildflyIntegrationTest {
         .withBuildImageCmdModifier(cmd -> cmd.withDockerfilePath("target/test-classes/Dockerfile.wildfly"));
 
     @Container
-    private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
+    private static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:16-alpine")
         .withNetwork(NETWORK)
         .withNetworkAliases("db")
         .withDatabaseName("test")

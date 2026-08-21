@@ -15,19 +15,36 @@
  */
 package org.transactionunit;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
+/**
+ * This test runs in a forked jvm of its own, where no persistence provider has been created yet. The order of the
+ * test methods matters, because {@link #providerIsResolvedFromClassPath()} needs a jvm where
+ * {@link TransactionUnitProvider} has not been instantiated yet and the other test instantiates one.
+ */
 @Tag("without-hibernate")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class NoPersistenceProviderInitializedTest {
 
     @Test
+    @Order(1)
+    @DisplayName("The provider is resolved from the class path when none has been created yet")
+    public void providerIsResolvedFromClassPath() {
+        assertThat(TransactionUnitProvider.getInstance()).isNotNull();
+    }
+
+    @Test
+    @Order(2)
     @DisplayName("No ProviderUtil is available when no delegate is initialized")
     public void noProviderUtilWithoutDelegate() {
         assertThrows(IllegalStateException.class, () -> new TransactionUnitProvider().getProviderUtil());
     }
-
 }

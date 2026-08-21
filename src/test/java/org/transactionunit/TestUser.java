@@ -16,17 +16,23 @@
 package org.transactionunit;
 
 import static org.transactionunit.TestUser.FIND_ALL;
+import static org.transactionunit.TestUser.WITH_NAME;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.NamedQuery;
 
 @Entity
-@NamedQuery(name = FIND_ALL, query = "SELECT u FROM TestUser u")
+// the result class is needed for EntityManagerFactory#getNamedQueries(Class) to find this query
+@NamedQuery(name = FIND_ALL, query = "SELECT u FROM TestUser u", resultClass = TestUser.class)
+@NamedEntityGraph(name = WITH_NAME, attributeNodes = @NamedAttributeNode("name"))
 public class TestUser {
 
     public static final String FIND_ALL = "TestUser.findAll";
+    public static final String WITH_NAME = "TestUser.withName";
 
     @Id
     @GeneratedValue

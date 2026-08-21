@@ -22,7 +22,7 @@ under the License.
 
   <groupId>org.transactionunit</groupId>
   <artifactId>transactionunit</artifactId>
-  <version>1.1.3-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
 
   <name>Transaction-Unit</name>
   <url>http://www.transactionunit.org</url>
@@ -65,16 +65,14 @@ under the License.
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <jupiter.version>5.10.2</jupiter.version>
-    <spring.boot.version>3.5.3</spring.boot.version>
+    <jupiter.version>6.0.3</jupiter.version>
+    <spring.boot.version>4.1.0</spring.boot.version>
 
     <assertj.version>3.21.0</assertj.version>
 
-    <meecrowave.version>1.2.15</meecrowave.version>
-    <cxf.version>4.1.2</cxf.version>
-    <openwebbeans.version>4.0.3</openwebbeans.version>
+    <meecrowave.version>2.1.1</meecrowave.version>
     <microjpa.version>2.1.3</microjpa.version>
-    <testcontainers.version>1.20.4</testcontainers.version>
+    <testcontainers.version>2.0.5</testcontainers.version>
   </properties>
 
   <dependencyManagement>
@@ -86,17 +84,18 @@ under the License.
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring.boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
+      <!-- must be imported before spring-boot-dependencies, which pins an older Testcontainers -->
       <dependency>
         <groupId>org.testcontainers</groupId>
         <artifactId>testcontainers-bom</artifactId>
         <version>${testcontainers.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring.boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -112,7 +111,7 @@ under the License.
     <dependency>
       <groupId>jakarta.enterprise</groupId>
       <artifactId>jakarta.enterprise.cdi-api</artifactId>
-      <version>3.0.1</version>
+      <version>4.1.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -143,81 +142,10 @@ under the License.
       <artifactId>junit-jupiter-api</artifactId>
     </dependency>
 
-    <!--  Meecrowave  -->
     <dependency>
       <groupId>org.apache.meecrowave</groupId>
       <artifactId>meecrowave-junit</artifactId>
       <version>${meecrowave.version}</version>
-      <scope>test</scope>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.meecrowave</groupId>
-          <artifactId>meecrowave-core</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.meecrowave</groupId>
-      <artifactId>meecrowave-core</artifactId>
-      <version>${meecrowave.version}</version>
-      <scope>test</scope>
-      <classifier>jakarta</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.meecrowave</groupId>
-          <artifactId>meecrowave-specs-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-integration-cdi</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-rs-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.openwebbeans</groupId>
-          <artifactId>openwebbeans-spi</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.openwebbeans</groupId>
-          <artifactId>openwebbeans-web</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>${cxf.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-integration-cdi</artifactId>
-      <version>${cxf.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-      <version>${cxf.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-spi</artifactId>
-      <version>${openwebbeans.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-web</artifactId>
-      <version>${openwebbeans.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -269,16 +197,12 @@ under the License.
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.junit.vintage</groupId>
-          <artifactId>junit-vintage-engine</artifactId>
-        </exclusion>
-      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-webmvc-test</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -288,64 +212,37 @@ under the License.
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>postgresql</artifactId>
+      <artifactId>testcontainers-postgresql</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
-      <artifactId>junit-jupiter</artifactId>
+      <artifactId>testcontainers-junit-jupiter</artifactId>
       <scope>test</scope>
     </dependency>
 
-    <!-- Compiles the WildFly test app (src/test/wildfly) alongside the main tests so compile/checkstyle errors surface early -->
     <dependency>
       <groupId>jakarta.platform</groupId>
       <artifactId>jakarta.jakartaee-api</artifactId>
-      <version>10.0.0</version>
+      <version>11.0.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <!-- the WildFly test builds its docker image from these, ${project.version} needs filtering.
+           The sources and resources of the WildFly test application are deliberately not added here,
+           they are only built inside the container. -->
+      <testResource>
+        <directory>src/test/wildfly/docker</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.6.0</version>
-        <executions>
-          <execution>
-            <id>add-wildfly-test-sources</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>src/test/wildfly/src/main/java</source>
-              </sources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>add-wildfly-test-resource</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>add-test-resource</goal>
-            </goals>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>src/test/wildfly/src/main/resources</directory>
-                  <filtering>false</filtering>
-                </resource>
-                <resource>
-                  <directory>src/test/wildfly/docker</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
@@ -498,7 +395,6 @@ under the License.
         <version>3.2.0</version>
         <configuration>
           <consoleOutput>true</consoleOutput>
-          <encoding>UTF-8</encoding>
           <configLocation>${project.basedir}/src/main/checkstyle/configuration.xml</configLocation>
           <headerLocation>${project.basedir}/src/main/checkstyle/java.header</headerLocation>
         </configuration>

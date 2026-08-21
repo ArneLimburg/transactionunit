@@ -19,6 +19,8 @@ import static org.transactionunit.TransactionUnitProvider.getInstance;
 
 import java.util.Map;
 import java.util.concurrent.Semaphore;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -26,9 +28,13 @@ import jakarta.persistence.Cache;
 import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceUnitTransactionType;
 import jakarta.persistence.PersistenceUnitUtil;
 import jakarta.persistence.Query;
+import jakarta.persistence.SchemaManager;
 import jakarta.persistence.SynchronizationType;
+import jakarta.persistence.TypedQueryReference;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.metamodel.Metamodel;
 
@@ -37,12 +43,42 @@ public class TransactionUnitEntityManagerFactory implements EntityManagerFactory
     private static final Logger LOG = Logger.getLogger(TransactionUnitEntityManagerFactory.class.getName());
 
     private EntityManagerFactory delegate;
+
     private Semaphore entityManagerSemaphore = new Semaphore(1);
+    private volatile Thread entityManagerOwner;
     private TransactionUnitEntityManager entityManager;
 
     public TransactionUnitEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         delegate = entityManagerFactory;
         getInstance().registerEntityManagerFactory(this);
+    }
+
+    public void runInTransaction(Consumer<EntityManager> work) {
+        callInTransaction(e -> {
+            work.accept(e);
+            return null;
+        });
+    }
+
+    public <R> R callInTransaction(Function<EntityManager, R> work) {
+        boolean nestedCall = holdsEntityManager();
+        TransactionUnitEntityManager transactionUnitEntityManager = createEntityManager(delegate::createEntityManager);
+        EntityTransaction transaction = transactionUnitEntityManager.getTransaction();
+        boolean separateTransaction = !transaction.isActive();
+        try {
+            if (separateTransaction) {
+                transaction.begin();
+            }
+            R result = work.apply(transactionUnitEntityManager);
+            if (separateTransaction && !transaction.getRollbackOnly()) {
+                transaction.commit();
+            }
+            return result;
+        } finally {
+            if (!nestedCall && !transactionUnitEntityManager.isClosed()) {
+                release();
+            }
+        }
     }
 
     public void close() {
@@ -68,12 +104,21 @@ public class TransactionUnitEntityManagerFactory implements EntityManagerFactory
         return createEntityManager(() -> delegate.createEntityManager(synchronizationType, map));
     }
 
-    private EntityManager createEntityManager(Supplier<EntityManager> delegateSupplier) {
-        entityManagerSemaphore.acquireUninterruptibly();
+    private TransactionUnitEntityManager createEntityManager(Supplier<EntityManager> delegateSupplier) {
+        if (!holdsEntityManager()) {
+            entityManagerSemaphore.acquireUninterruptibly();
+            entityManagerOwner = Thread.currentThread();
+        }
         if (entityManager == null) {
             entityManager = new TransactionUnitEntityManager(this, delegateSupplier.get());
+        } else {
+            entityManager.reopen();
         }
         return entityManager;
+    }
+
+    private boolean holdsEntityManager() {
+        return entityManagerOwner == Thread.currentThread();
     }
 
     public CriteriaBuilder getCriteriaBuilder() {
@@ -112,6 +157,26 @@ public class TransactionUnitEntityManagerFactory implements EntityManagerFactory
         delegate.addNamedEntityGraph(graphName, entityGraph);
     }
 
+    public String getName() {
+        return delegate.getName();
+    }
+
+    public PersistenceUnitTransactionType getTransactionType() {
+        return delegate.getTransactionType();
+    }
+
+    public SchemaManager getSchemaManager() {
+        return delegate.getSchemaManager();
+    }
+
+    public <R> Map<String, TypedQueryReference<R>> getNamedQueries(Class<R> resultType) {
+        return delegate.getNamedQueries(resultType);
+    }
+
+    public <E> Map<String, EntityGraph<? extends E>> getNamedEntityGraphs(Class<E> entityType) {
+        return delegate.getNamedEntityGraphs(entityType);
+    }
+
     public boolean isRollbackOnly() {
         if (entityManager != null) {
             return entityManager.getTransaction().getRollbackOnly();
@@ -132,6 +197,7 @@ public class TransactionUnitEntityManagerFactory implements EntityManagerFactory
     }
 
     void release() {
+        entityManagerOwner = null;
         entityManagerSemaphore.release();
     }
 }
